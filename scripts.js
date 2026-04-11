@@ -2,9 +2,26 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 document.addEventListener('DOMContentLoaded', () => {
+    // =========================================================
+    // PRELOAD ALL IMAGES
+    // =========================================================
+    const preloadAllImages = () => {
+        const imagesToPreload = [
+            // Gallery Images
+            ...Array.from({ length: 14 }, (_, i) => `images/${i + 1}.avif`),
+            // Swipe Gallery Images
+            ...Array.from({ length: 5 }, (_, i) => `images-swipe/${i + 1}.avif`)
+        ];
+
+        imagesToPreload.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
+    };
+    preloadAllImages();
 
     // =========================================================
-    // 1. SCROLL REVEAL
+    // SCROLL REVEAL
     // =========================================================
     const revealObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
@@ -12,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
     // =========================================================
-    // 2. SCROLLSPY & NAVBAR
+    // SCROLLSPY & NAVBAR
     // =========================================================
     const sections  = document.querySelectorAll('section[id], footer');
     const navItems  = document.querySelectorAll('.nav-links a');
@@ -96,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(updateActiveNav, 300);
 
     // =========================================================
-    // 3. SMOOTH SCROLL
+    // SMOOTH SCROLL
     // =========================================================
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', e => {
@@ -112,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 4. MOBILE MENU TOGGLE
+    // MOBILE MENU TOGGLE
     // =========================================================
     const mobileMenuBtn = document.getElementById('mobile-menu');
     const navLinksList  = document.querySelector('.nav-links');
@@ -141,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 5. SWIPE GALERI
+    // SWIPE GALERI
     // =========================================================
     const galeri = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
@@ -217,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 6. LIGHTBOX
+    // LIGHTBOX
     // =========================================================
     const lightbox        = document.getElementById('lightbox');
     const lightboxImg     = document.getElementById('lightbox-img');
@@ -283,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 7. GALERI AUTO-SCROLL
+    // GALERI AUTO-SCROLL
     // =========================================================
     const carousel1 = document.getElementById('galeri-carousel-1');
     const carousel2 = document.getElementById('galeri-carousel-2');
@@ -320,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 8. HERO SLIDER
+    // HERO BANNER SLIDE
     // =========================================================
     const heroSlider = document.getElementById('hero-slider');
     const heroDots   = document.querySelectorAll('.hero-dot');
@@ -365,7 +382,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 9. READ MORE / SEJARAH
+    // READ MORE / SEJARAH
     // =========================================================
     const btnReadMore    = document.getElementById('btn-read-more');
     const sejarahPanjang = document.getElementById('sejarah-panjang');
@@ -393,8 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 10. 3D TILT — LIGHTBOX IMAGE
-    // Viewport dimensions cached and updated on resize (not read per mousemove)
+    // 3D TILT — LIGHTBOX IMAGE
     // =========================================================
     let vpW = window.innerWidth, vpH = window.innerHeight;
     window.addEventListener('resize', () => { vpW = window.innerWidth; vpH = window.innerHeight; }, { passive: true });
@@ -419,7 +435,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 11. 3D TILT — GOOGLE MAP
+    // 3D TILT — GOOGLE MAP
     // =========================================================
     const mapBox     = document.querySelector('.lokasi-map-box');
     const mapOverlay = document.getElementById('map-overlay');
