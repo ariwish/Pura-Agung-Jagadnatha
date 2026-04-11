@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pura Jagadnatha Denpasar</title>
     <link rel="icon" href="assets/icon.ico" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Preconnect to Google Fonts origin for faster DNS + TLS handshake -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Single combined font request (was split between HTML link + CSS @import) -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Balinese:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Preload first hero background image so the browser fetches it early -->
+    <link rel="preload" as="image" href="images/3.jpg" fetchpriority="high">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
@@ -67,12 +73,12 @@
                     <button id="btn-read-more" class="read-more-btn">Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i></button>
                 </div>
                 <div class="about-gallery reveal">
-                    <div class="swipe-gallery" id="tinder-gallery">
-                        <div class="swipe-card"><img src="images-swipe/1.jpg" alt="Jagadnatha"></div>
-                        <div class="swipe-card"><img src="images-swipe/2.jpg" alt="Jagadnatha"></div>
-                        <div class="swipe-card"><img src="images-swipe/3.jpg" alt="Jagadnatha"></div>
-                        <div class="swipe-card"><img src="images-swipe/4.jpg" alt="Jagadnatha"></div>
-                        <div class="swipe-card"><img src="images-swipe/5.jpg" alt="Jagadnatha"></div>
+                    <div class="swipe-gallery" id="swipe-gallery">
+                        <div class="swipe-card"><img src="images-swipe/1.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
+                        <div class="swipe-card"><img src="images-swipe/2.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
+                        <div class="swipe-card"><img src="images-swipe/3.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
+                        <div class="swipe-card"><img src="images-swipe/4.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
+                        <div class="swipe-card"><img src="images-swipe/5.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
                     </div>
                     <p id="swipe-guide" class="swipe-guide">&larr; Geser gambar ke kiri atau kanan &rarr;</p>
                 </div>
@@ -92,32 +98,32 @@
             </div>
             <div class="gallery-carousel-wrapper" id="carousel-wrapper">
                 <div class="gallery-carousel" id="gallery-carousel-1">
-                    <div class="gallery-item"><img src="images/1.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/2.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/3.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/4.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/5.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/6.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/7.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/8.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/9.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/1.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/10.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/11.jpg" alt="Pura"></div>
+                    <div class="gallery-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/2.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/3.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/4.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/5.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/6.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/7.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/8.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/9.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/10.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/11.jpg" alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
                 <div class="gallery-carousel" id="gallery-carousel-2">
-                    <div class="gallery-item"><img src="images/12.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/13.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/14.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/15.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/16.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/17.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/18.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/19.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/20.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/21.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/22.jpg" alt="Pura"></div>
-                    <div class="gallery-item"><img src="images/23.jpg" alt="Pura"></div>
+                    <div class="gallery-item"><img src="images/12.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/13.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/14.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/15.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/16.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/17.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/18.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/19.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/20.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/21.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/22.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="gallery-item"><img src="images/23.jpg" alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
             </div>
         </section>
@@ -143,7 +149,6 @@
 
         <!-- LOKASI & KONTAK SECTION -->
         <section id="lokasi" class="lokasi-section">
-            <div class="lokasi-overlay"></div>
             <div class="container lokasi-container reveal">
                 <div class="lokasi-map-box">
                     <div class="map-overlay" id="map-overlay">
@@ -184,7 +189,7 @@
     <footer class="simple-footer">
         <div class="container footer-inner">
             <div class="footer-brand">
-                <img src="assets/logo.png" alt="Logo">
+                <img src="assets/logo.png" alt="Logo" loading="lazy">
                 <h3>Pura Agung Jagadnatha</h3>
             </div>
             <p class="footer-copy">&copy; <span id="year"></span> Pura Agung Jagadnatha. All rights reserved.</p>

@@ -5,7 +5,7 @@
 /* ============================================= */
 /* FONTS & VARIABLES                             */
 /* ============================================= */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Balinese:wght@400;500;600;700&display=swap');
+/* Google Fonts loaded via <link> in HTML to avoid render-blocking @import */
 
 @font-face {
     font-family: 'Noto Sans Balinese Local';
@@ -201,6 +201,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     height: 100%;
     position: absolute;
     top: 0; left: 0;
+    will-change: transform;
     transition: transform 0.6s ease-in-out;
 }
 
@@ -337,6 +338,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     transform-origin: bottom center;
     user-select: none;
     border: 2px solid rgba(212,175,55,0.1);
+    will-change: transform;
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 .swipe-card:active { cursor: grabbing; }
@@ -369,12 +371,15 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     gap: 20px;
     overflow: hidden;
     padding: 10px 0;
+    /* Isolate carousel layout so its constant animation doesn't cause page-level reflows */
+    contain: layout paint;
 }
 
 .gallery-carousel {
     display: flex;
     gap: 20px;
     width: max-content;
+    will-change: transform;
 }
 
 .gallery-item {
@@ -385,7 +390,8 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     overflow: hidden;
     border-radius: var(--border-radius);
     border: 1px solid rgba(0,0,0,1);
-    transition: var(--transition-smooth);
+    /* Specific property instead of transition:all to avoid triggering layout on hover */
+    transition: border-color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .gallery-item:hover { border-color: var(--white); }
 .gallery-item img {
@@ -433,7 +439,8 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
-    transition: var(--transition-smooth);
+    /* Specific property instead of transition:all */
+    transition: color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .lightbox-close:hover { color: var(--gold); }
 
@@ -464,11 +471,11 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 .interview-section {
     position: relative;
+    /* background-attachment:fixed removed — it forces a full repaint on every scroll tick
+       because the browser cannot composite a fixed background independently. */
     background: url('images/11.jpg') no-repeat center center/cover;
-    background-attachment: fixed;
     color: var(--cream);
     overflow: hidden;
-    perspective: 1500px;
 }
 
 .interview-overlay {
@@ -492,8 +499,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     width: 100%;
     max-width: 900px;
     margin: 0 auto;
-    transition: transform 0.15s ease-out;
-    transform-style: preserve-3d;
 }
 
 .video-wrapper {
@@ -501,7 +506,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
     background: #000;
 }
 .video-wrapper video { width: 100%; display: block; outline: none; }
@@ -582,6 +587,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     aspect-ratio: 4/3;
     background: #111;
     position: relative;
+    will-change: transform;
     transform-style: preserve-3d;
     transition: transform 0.15s ease-out, box-shadow 0.3s ease;
 }
