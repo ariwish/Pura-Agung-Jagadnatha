@@ -1,5 +1,6 @@
-# Pura Agung Jagadnatha
-website landing page pura agung jagadnatha
-<img width="1897" height="959" alt="image" src="https://github.com/user-attachments/assets/2ae29b33-f393-4986-9d2c-b6406b9a3fec" />
+# Pura Agung Jagadnatha Landing Page
 
+<img width="1585" height="946" alt="image" src="https://github.com/user-attachments/assets/89cd5df7-dd2b-4ab6-9262-7c5eb5fd14aa" />
+
+Landing Page Website for Pura Agung Jagadnatha
 made with HTML, CSS, JavaScript
