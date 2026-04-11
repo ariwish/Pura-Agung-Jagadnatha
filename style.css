@@ -3,8 +3,8 @@
 /* ============================================= */
 
 @font-face {
-    font-family: 'Noto Sans Balinese Local';
-    src: url('assets/NotoSansBalinese.ttf') format('truetype');
+    font-family: 'Noto Sans Balinese';
+    src: url('assets/aksara_only.woff') format('woff'); /* This fucking font is just containing "pura jagadnatha" in aksara bali (original: NotoSansBalinise)*/
 }
 
 :root {
@@ -17,7 +17,7 @@
     --font-display: 'Cinzel Decorative', cursive;
     --font-serif: 'Playfair Display', serif;
     --font-body: 'Outfit', sans-serif;
-    --font-aksara: 'Noto Sans Balinese Local', 'Noto Sans Balinese', serif;
+    --font-aksara: 'Noto Sans Balinese', 'Noto Sans Balinese';
 
     --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     --border-radius: 8px;
