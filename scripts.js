@@ -116,13 +116,32 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const mobileMenuBtn = document.getElementById('mobile-menu');
     const navLinksList  = document.querySelector('.nav-links');
-    mobileMenuBtn.addEventListener('click', () => {
+
+    const closeMobileMenu = () => {
+        navLinksList.classList.remove('nav-active');
+        mobileMenuBtn.classList.remove('toggle-active');
+    };
+
+    mobileMenuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         navLinksList.classList.toggle('nav-active');
         mobileMenuBtn.classList.toggle('toggle-active');
     });
 
+    // Close on link click
+    navLinksList.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMobileMenu);
+    });
+
+    // Close on click outside
+    document.addEventListener('click', (e) => {
+        if (navLinksList.classList.contains('nav-active') && !navLinksList.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+            closeMobileMenu();
+        }
+    });
+
     // =========================================================
-    // 5. SWIPE galeri
+    // 5. SWIPE GALERI
     // =========================================================
     const galeri     = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
@@ -197,17 +216,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxPrev    = document.getElementById('lightbox-prev');
     const lightboxNext    = document.getElementById('lightbox-next');
-    let galeriItems = [], originalgaleriItems = [], currentIndex = -1;
+    let galeriItems = [], originalgaleriItems = [], currentIndex = -1, lightboxActive = false;
 
     document.addEventListener('click', e => {
         const item = e.target.closest('.galeri-item');
         if (item?.closest('.galeri-carousel-wrapper')) {
             const idx = item.getAttribute('data-index');
-            if (idx !== null) { galeriItems = originalgaleriItems; currentIndex = parseInt(idx); openLightbox(galeriItems[currentIndex]); }
+            if (idx !== null) { 
+                galeriItems = originalgaleriItems; 
+                currentIndex = parseInt(idx); 
+                openLightbox(galeriItems[currentIndex]); 
+            }
         }
     });
 
     function openLightbox(item, direction = null) {
+        lightboxActive = true;
         const img     = item.querySelector('img');
         const caption = item.getAttribute('data-caption');
         if (direction && lightbox.classList.contains('active')) {
@@ -224,7 +248,14 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxNext.style.display = show ? 'flex' : 'none';
     }
 
-    const closeLightbox = () => lightbox.classList.remove('active');
+    const closeLightbox = () => {
+        lightboxActive = false;
+        lightbox.classList.remove('active');
+        // Resume animation if it was active
+        if (galeriAnimating && !galeriRafId) {
+            galeriRafId = requestAnimationFrame(animategaleri);
+        }
+    };
     lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); });
     lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); });
     document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
@@ -238,17 +269,42 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 7. galeri AUTO-SCROLL
+    // 7. GALERI AUTO-SCROLL
     // Paused via IntersectionObserver when section is off-screen
     // =========================================================
     const carousel1 = document.getElementById('galeri-carousel-1');
     const carousel2 = document.getElementById('galeri-carousel-2');
 
+    // Randomize initial image order
+    const allGalleryItems = [];
+    if (carousel1) allGalleryItems.push(...Array.from(carousel1.children));
+    if (carousel2) allGalleryItems.push(...Array.from(carousel2.children));
+
+    // Shuffle using Fisher-Yates
+    for (let i = allGalleryItems.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allGalleryItems[i], allGalleryItems[j]] = [allGalleryItems[j], allGalleryItems[i]];
+    }
+
+    // Clear carousels
+    if (carousel1) carousel1.innerHTML = '';
+    if (carousel2) carousel2.innerHTML = '';
+
+    // Re-distribute and Setup Infinite Scroll
+    const midpoint = Math.ceil(allGalleryItems.length / 2);
+    allGalleryItems.forEach((item, i) => {
+        const targetCarousel = (i < midpoint) ? carousel1 : carousel2;
+        if (!targetCarousel) return;
+
+        item.setAttribute('data-index', originalgaleriItems.length);
+        originalgaleriItems.push(item);
+        targetCarousel.appendChild(item);
+    });
+
+    // Clone for infinite effect after randomization
     [carousel1, carousel2].forEach(carousel => {
         if (!carousel) return;
         Array.from(carousel.children).forEach(item => {
-            item.setAttribute('data-index', originalgaleriItems.length);
-            originalgaleriItems.push(item);
             carousel.appendChild(item.cloneNode(true));
         });
     });
@@ -259,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let galeriRafId     = null;
 
     function animategaleri() {
-        if (!galeriAnimating) { galeriRafId = null; return; }
+        if (!galeriAnimating || lightboxActive) { galeriRafId = null; return; }
         if (carousel1) {
             pos1 += speed;
             if (pos1 >= carousel1.scrollWidth / 2) pos1 = 0;
@@ -386,7 +442,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================
-    // 11. 3D TILT — GOOGLE MAP BOX
+    // 11. 3D TILT — GOOGLE MAP
     // =========================================================
     const mapBox     = document.querySelector('.lokasi-map-box');
     const mapOverlay = document.getElementById('map-overlay');

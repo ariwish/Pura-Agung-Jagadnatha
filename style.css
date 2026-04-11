@@ -271,6 +271,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     color: var(--gold);
     letter-spacing: 5px;
     line-height: 2;
+    transition: font-size 0.3s ease, letter-spacing 0.3s ease;
 }
 
 .hero h1 {
@@ -379,7 +380,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     color: var(--cream);
     position: relative;
     padding: 100px 0 20px;
-    padding-bottom: 100px;
+    padding-bottom: 4vw;
 }
 
 .galeri-header { padding-top: 10vw; position: relative; z-index: 10; }
@@ -390,7 +391,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     gap: 20px;
     overflow: hidden;
     padding: 10px 0;
-    /* Isolate carousel layout so its constant animation doesn't cause page-level reflows */
     contain: layout paint;
 }
 
@@ -409,7 +409,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     overflow: hidden;
     border-radius: var(--border-radius);
     border: 1px solid rgba(0,0,0,1);
-    /* Specific property instead of transition:all to avoid triggering layout on hover */
     transition: border-color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .galeri-item:hover { border-color: var(--white); }
@@ -490,16 +489,16 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 .wawancara-section {
     position: relative;
-    background: url('images/11.jpg') no-repeat center center/cover;
+    background: url('images/16.avif') no-repeat center center/cover;
     overflow: hidden;
 }
 
 .wawancara-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(10,6,0,0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    background: rgba(35, 22, 2, 0.4);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     z-index: 1;
 }
 
@@ -533,7 +532,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 .lokasi-section {
     position: relative;
     background: var(--black);
-    padding: 100px 0 80px;
+    padding: 200px 0 200px;
     overflow: hidden;
     color: var(--white);
 }
@@ -639,7 +638,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 /* FOOTER                                        */
 /* ============================================= */
-.simple-footer { background: var(--black); padding: 32px 0; }
+.simple-footer { background: rgb(7, 7, 7); padding: 24px 0; }
 
 .footer-inner {
     display: flex;
@@ -659,16 +658,26 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 @media screen and (max-width: 1024px) {
     .hero h1 { font-size: 3.5rem; }
+    .nav-text { display: none; }
+    #sejarah .section-title { text-align: center; }
 }
 
 @media screen and (max-width: 900px) {
     .grid-2 { grid-template-columns: 1fr; gap: 40px; }
     .lokasi-container { grid-template-columns: 1fr; gap: 40px; }
+    .lokasi-info { order: -1; }
     .lokasi-map-box { aspect-ratio: 16/9; }
 }
 
 @media screen and (max-width: 768px) {
     .hero h1 { font-size: 2.8rem; }
+
+    .nav-text {
+        display: block;
+        font-size: 0.85rem;
+        line-height: 1.1;
+        max-width: 150px;
+    }
 
     .nav-links {
         position: fixed;
@@ -689,4 +698,9 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     .toggle-active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
     .toggle-active span:nth-child(2) { opacity: 0; }
     .toggle-active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+    .aksara-hero {
+        font-size: 2rem;
+        letter-spacing: 2px;
+    }
 }
