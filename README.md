@@ -1,5 +1,4 @@
 # Pura Agung Jagadnatha
-<img width="1339" height="302" alt="image" src="https://github.com/user-attachments/assets/f950fdd2-8a1e-4566-a380-e3f0641e1b8a" />
 
 **Pura Agung Jagadnatha** adalah proyek website untuk memperkenalkan keindahan dan sejarah dari Pura Agung Jagadnatha yang terletak di Kota Denpasar, Bali.
 
