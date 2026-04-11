@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
     // =========================================================
-    // 2. SCROLLSPY & NAVBAR — single rAF-throttled scroll handler
+    // 2. SCROLLSPY & NAVBAR
     // =========================================================
     const sections  = document.querySelectorAll('section[id], footer');
     const navItems  = document.querySelectorAll('.nav-links a');
@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (scrollY < 100) {
             activeId = 'home';
         } else {
-            // Use cached offsetTops — no layout reads during scroll
             sectionTops.forEach((top, i) => {
                 const s = sections[i];
                 if (s.tagName === 'FOOTER') return;
@@ -66,8 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Single merged scroll listener (was previously two separate listeners)
-    // rAF throttle ensures at most one DOM write per animation frame
     let scrollPending = false;
     function onScroll() {
         if (scrollPending) return;
@@ -99,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(updateActiveNav, 300);
 
     // =========================================================
-    // 3. SMOOTH SCROLL (anchor links)
+    // 3. SMOOTH SCROLL
     // =========================================================
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', e => {
@@ -125,18 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================
-    // 5. SWIPE GALLERY
+    // 5. SWIPE galeri
     // =========================================================
-    const gallery     = document.getElementById('swipe-gallery');
+    const galeri     = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
     let isDragging    = false, startX = 0, currentX = 0;
 
     // Card list cached here; refreshed by initCards() after each DOM reorder
-    let swipeCards = Array.from(gallery.querySelectorAll('.swipe-card'));
+    let swipeCards = Array.from(galeri.querySelectorAll('.swipe-card'));
 
     function initCards() {
-        const isExpanded = document.querySelector('#about .container')?.classList.contains('about-expanded');
-        swipeCards = Array.from(gallery.querySelectorAll('.swipe-card')); // refresh after appendChild reorder
+        const isExpanded = document.querySelector('#sejarah .container')?.classList.contains('sejarah-expanded');
+        swipeCards = Array.from(galeri.querySelectorAll('.swipe-card')); // refresh after appendChild reorder
         swipeCards.forEach((card, i) => {
             card.style.zIndex     = swipeCards.length - i;
             card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease';
@@ -155,26 +152,26 @@ document.addEventListener('DOMContentLoaded', () => {
     initCards();
 
     function startDrag(e) {
-        if (e.currentTarget !== swipeCards[0]) return;
+        const card = e.currentTarget;
+        if (card !== swipeCards[0]) return;
         if (swipeGuideEl) swipeGuideEl.style.opacity = '0';
         isDragging = true;
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
-        e.currentTarget.style.transition = 'none';
+        card.style.transition = 'none';
 
         const onMove = ev => {
             if (!isDragging) return;
             currentX = (ev.type === 'mousemove' ? ev.pageX : ev.touches[0].pageX) - startX;
-            e.currentTarget.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
+            card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
         };
         const onEnd = () => {
             isDragging = false;
-            const card = swipeCards[0];
             card.style.transition = 'transform 0.5s ease, opacity 0.6s ease';
             if (Math.abs(currentX) > 100) {
                 const dir = currentX > 0 ? 1 : -1;
                 card.style.opacity   = '0';
                 card.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 90}deg)`;
-                setTimeout(() => { gallery.appendChild(card); initCards(); }, 400);
+                setTimeout(() => { galeri.appendChild(card); initCards(); }, 400);
             } else { initCards(); }
             window.removeEventListener('mousemove', onMove);
             window.removeEventListener('mouseup', onEnd);
@@ -200,13 +197,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxPrev    = document.getElementById('lightbox-prev');
     const lightboxNext    = document.getElementById('lightbox-next');
-    let galleryItems = [], originalGalleryItems = [], currentIndex = -1;
+    let galeriItems = [], originalgaleriItems = [], currentIndex = -1;
 
     document.addEventListener('click', e => {
-        const item = e.target.closest('.gallery-item');
-        if (item?.closest('.gallery-carousel-wrapper')) {
+        const item = e.target.closest('.galeri-item');
+        if (item?.closest('.galeri-carousel-wrapper')) {
             const idx = item.getAttribute('data-index');
-            if (idx !== null) { galleryItems = originalGalleryItems; currentIndex = parseInt(idx); openLightbox(galleryItems[currentIndex]); }
+            if (idx !== null) { galeriItems = originalgaleriItems; currentIndex = parseInt(idx); openLightbox(galeriItems[currentIndex]); }
         }
     });
 
@@ -222,47 +219,47 @@ document.addEventListener('DOMContentLoaded', () => {
         lightboxImg.src           = img.src;
         lightboxCaption.innerText = caption || '';
         lightbox.classList.add('active');
-        const show = galleryItems.length > 1;
+        const show = galeriItems.length > 1;
         lightboxPrev.style.display = show ? 'flex' : 'none';
         lightboxNext.style.display = show ? 'flex' : 'none';
     }
 
     const closeLightbox = () => lightbox.classList.remove('active');
-    lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length; openLightbox(galleryItems[currentIndex], 'prev'); });
-    lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galleryItems.length; openLightbox(galleryItems[currentIndex], 'next'); });
+    lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); });
+    lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); });
     document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 
     document.addEventListener('keydown', e => {
         if (!lightbox.classList.contains('active')) return;
-        if      (e.key === 'ArrowLeft')  { currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length; openLightbox(galleryItems[currentIndex], 'prev'); }
-        else if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % galleryItems.length; openLightbox(galleryItems[currentIndex], 'next'); }
+        if      (e.key === 'ArrowLeft')  { currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); }
+        else if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); }
         else if (e.key === 'Escape')     closeLightbox();
     });
 
     // =========================================================
-    // 7. GALLERY AUTO-SCROLL
+    // 7. galeri AUTO-SCROLL
     // Paused via IntersectionObserver when section is off-screen
     // =========================================================
-    const carousel1 = document.getElementById('gallery-carousel-1');
-    const carousel2 = document.getElementById('gallery-carousel-2');
+    const carousel1 = document.getElementById('galeri-carousel-1');
+    const carousel2 = document.getElementById('galeri-carousel-2');
 
     [carousel1, carousel2].forEach(carousel => {
         if (!carousel) return;
         Array.from(carousel.children).forEach(item => {
-            item.setAttribute('data-index', originalGalleryItems.length);
-            originalGalleryItems.push(item);
+            item.setAttribute('data-index', originalgaleriItems.length);
+            originalgaleriItems.push(item);
             carousel.appendChild(item.cloneNode(true));
         });
     });
 
     let pos1 = 0, pos2 = 0;
     const speed = 1.6;
-    let galleryAnimating = false;
-    let galleryRafId     = null;
+    let galeriAnimating = false;
+    let galeriRafId     = null;
 
-    function animateGallery() {
-        if (!galleryAnimating) { galleryRafId = null; return; }
+    function animategaleri() {
+        if (!galeriAnimating) { galeriRafId = null; return; }
         if (carousel1) {
             pos1 += speed;
             if (pos1 >= carousel1.scrollWidth / 2) pos1 = 0;
@@ -273,20 +270,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pos2 >= carousel2.scrollWidth / 2) pos2 = 0;
             carousel2.style.transform = `translateX(${pos2 - carousel2.scrollWidth / 2}px)`;
         }
-        galleryRafId = requestAnimationFrame(animateGallery);
+        galeriRafId = requestAnimationFrame(animategaleri);
     }
 
-    const gallerySection = document.getElementById('gallery');
-    if (gallerySection) {
+    const galeriSection = document.getElementById('galeri');
+    if (galeriSection) {
         new IntersectionObserver(([entry]) => {
-            galleryAnimating = entry.isIntersecting;
-            if (galleryAnimating && !galleryRafId) {
-                galleryRafId = requestAnimationFrame(animateGallery);
+            galeriAnimating = entry.isIntersecting;
+            if (galeriAnimating && !galeriRafId) {
+                galeriRafId = requestAnimationFrame(animategaleri);
             }
-        }, { rootMargin: '200px' }).observe(gallerySection);
+        }, { rootMargin: '200px' }).observe(galeriSection);
     } else {
-        galleryAnimating = true;
-        galleryRafId = requestAnimationFrame(animateGallery);
+        galeriAnimating = true;
+        galeriRafId = requestAnimationFrame(animategaleri);
     }
 
     // =========================================================
@@ -339,8 +336,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     const btnReadMore    = document.getElementById('btn-read-more');
     const sejarahPanjang = document.getElementById('sejarah-panjang');
-    const aboutContainer = document.querySelector('#about .container');
-    const aboutSection   = document.getElementById('about'); // cached — avoids getElementById on every click
+    const sejarahContainer = document.querySelector('#sejarah .container');
+    const sejarahSection   = document.getElementById('sejarah'); // cached — avoids getElementById on every click
 
     if (btnReadMore && sejarahPanjang) {
         btnReadMore.addEventListener('click', () => {
@@ -348,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isOpen   = sejarahPanjang.style.display === 'block';
 
             sejarahPanjang.style.display = isOpen ? 'none' : 'block';
-            aboutContainer?.classList.toggle('about-expanded', !isOpen);
+            sejarahContainer?.classList.toggle('sejarah-expanded', !isOpen);
             btnReadMore.innerHTML       = isOpen ? 'Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i>' : 'Tutup Sejarah <i class="fa-solid fa-chevron-up"></i>';
             btnReadMore.style.marginTop = isOpen ? '25px' : '40px';
             if (quoteBox)    quoteBox.style.display    = isOpen ? 'block' : 'none';
@@ -356,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const navH = mainNav.offsetHeight; // fresh read on user click (not in a hot loop)
             setTimeout(() => {
-                window.scrollTo({ top: aboutSection.getBoundingClientRect().top + window.scrollY - navH - 20, behavior: 'smooth' });
+                window.scrollTo({ top: sejarahSection.getBoundingClientRect().top + window.scrollY - navH - 20, behavior: 'smooth' });
             }, isOpen ? 100 : 50);
             setTimeout(initCards, 50);
         });

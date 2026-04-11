@@ -5,12 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pura Jagadnatha Denpasar</title>
     <link rel="icon" href="assets/icon.ico" type="image/x-icon">
-    <!-- Preconnect to Google Fonts origin for faster DNS + TLS handshake -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Single combined font request (was split between HTML link + CSS @import) -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Cinzel+Decorative:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Balinese:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Preload first hero background image so the browser fetches it early -->
     <link rel="preload" as="image" href="images/3.jpg" fetchpriority="high">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -26,9 +23,9 @@
             </a>
             <ul class="nav-links">
                 <li><a href="#home">Beranda</a></li>
-                <li><a href="#about">Sejarah</a></li>
-                <li><a href="#gallery">Galeri</a></li>
-                <li><a href="#interview">Wawancara</a></li>
+                <li><a href="#sejarah">Sejarah</a></li>
+                <li><a href="#galeri">Galeri</a></li>
+                <li><a href="#wawancara">Wawancara</a></li>
                 <li><a href="#lokasi">Lokasi</a></li>
                 <div class="nav-pill-indicator"></div>
             </ul>
@@ -59,10 +56,10 @@
             </div>
         </section>
 
-        <!-- ABOUT (SEJARAH) SECTION -->
-        <section id="about">
+        <!-- SEJARAH SECTION -->
+        <section id="sejarah">
             <div class="container grid-2">
-                <div class="about-text reveal">
+                <div class="sejarah-text reveal reveal-left">
                     <h2 class="section-title">Sejarah</h2>
                     <p>Pura Agung Jagadnatha adalah pura terbesar di Kota Denpasar. Pura ini mulai dibangun pada tahun 1963 dan diresmikan pada 13 Mei 1968. Awalnya pura ini dibangun karena banyak umat Hindu yang tinggal atau mampir ke Denpasar tidak punya tempat untuk bersembahyang. Bangunan utamanya adalah Padmasana, singgasana suci setinggi 15 meter yang terbuat dari batu karang putih, penuh dengan ukiran tradisional khas Bali.</p>
                     <div id="sejarah-panjang" class="sejarah-panjang">
@@ -72,8 +69,8 @@
                     </div>
                     <button id="btn-read-more" class="read-more-btn">Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i></button>
                 </div>
-                <div class="about-gallery reveal">
-                    <div class="swipe-gallery" id="swipe-gallery">
+                <div class="sejarah-galeri reveal reveal-right">
+                    <div class="swipe-galeri" id="swipe-galeri">
                         <div class="swipe-card"><img src="images-swipe/1.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
                         <div class="swipe-card"><img src="images-swipe/2.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
                         <div class="swipe-card"><img src="images-swipe/3.jpg" alt="Jagadnatha" loading="lazy" decoding="async"></div>
@@ -85,58 +82,58 @@
             </div>
         </section>
 
-        <!-- GALLERY SECTION -->
-        <section id="gallery" class="gallery-section">
+        <!-- GALERI SECTION -->
+        <section id="galeri" class="galeri-section">
             <div class="wave-divider wave-cream">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
                 </svg>
             </div>
-            <div class="container text-center reveal gallery-header">
+            <div class="container text-center reveal galeri-header">
                 <h2 class="section-title gold">Galeri</h2>
                 <p class="section-sub">Keindahan suasana Pura Agung Jagadnatha.</p>
             </div>
-            <div class="gallery-carousel-wrapper" id="carousel-wrapper">
-                <div class="gallery-carousel" id="gallery-carousel-1">
-                    <div class="gallery-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/2.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/3.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/4.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/5.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/6.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/7.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/8.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/9.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/10.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/11.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+            <div class="galeri-carousel-wrapper reveal" id="carousel-wrapper">
+                <div class="galeri-carousel" id="galeri-carousel-1">
+                    <div class="galeri-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/2.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/3.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/4.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/5.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/6.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/7.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/8.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/9.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/1.jpg"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/10.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/11.jpg" alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
-                <div class="gallery-carousel" id="gallery-carousel-2">
-                    <div class="gallery-item"><img src="images/12.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/13.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/14.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/15.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/16.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/17.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/18.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/19.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/20.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/21.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/22.jpg" alt="Pura" loading="lazy" decoding="async"></div>
-                    <div class="gallery-item"><img src="images/23.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                <div class="galeri-carousel" id="galeri-carousel-2">
+                    <div class="galeri-item"><img src="images/12.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/13.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/14.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/15.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/16.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/17.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/18.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/19.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/20.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/21.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/22.jpg" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item"><img src="images/23.jpg" alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
             </div>
         </section>
 
         <!-- WAWANCARA SECTION -->
-        <section id="interview" class="interview-section scroll-padding">
+        <section id="wawancara" class="wawancara-section scroll-padding">
             <div class="wave-divider wave-black">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
                 </svg>
             </div>
-            <div class="interview-overlay"></div>
-            <div class="container text-center reveal interview-content">
+            <div class="wawancara-overlay"></div>
+            <div class="container text-center reveal wawancara-content">
                 <h2 class="section-title gold">Wawancara</h2>
                 <p class="section-sub">Wawancara kelompok kami dengan salah satu mangku di Pura Agung Jagadnatha.</p>
                 <div class="video-card-interactive">
@@ -150,7 +147,7 @@
         <!-- LOKASI & KONTAK SECTION -->
         <section id="lokasi" class="lokasi-section">
             <div class="container lokasi-container reveal">
-                <div class="lokasi-map-box">
+                <div class="lokasi-map-box reveal reveal-left">
                     <div class="map-overlay" id="map-overlay">
                         <div class="map-overlay-text">Lihat Peta</div>
                     </div>
@@ -159,7 +156,7 @@
                         allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                     </iframe>
                 </div>
-                <div class="lokasi-info">
+                <div class="lokasi-info reveal reveal-right">
                     <h2 class="section-title gold">Lokasi &amp; Kontak</h2>
                     <p class="lokasi-desc">Kunjungi kami atau hubungi langsung untuk <br> informasi lebih lanjut.</p>
                     <div class="lokasi-detail">

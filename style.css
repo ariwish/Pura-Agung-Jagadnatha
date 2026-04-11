@@ -91,9 +91,27 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 .wave-cream svg { fill: var(--cream); }
 .wave-black svg { fill: var(--black); }
 
-/* Scroll Reveal */
-.reveal { opacity: 1; transform: none; transition: none; }
-.reveal.active { opacity: 1; transform: translateY(0); }
+/* Scroll Reveal Effects */
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1), 
+                transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+    will-change: transform, opacity;
+}
+
+.reveal-left {
+    transform: translateX(-50px);
+}
+
+.reveal-right {
+    transform: translateX(50px);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translate(0, 0);
+}
 
 /* ============================================= */
 /* NAVBAR                                        */
@@ -270,9 +288,9 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 }
 
 /* ============================================= */
-/* ABOUT / SEJARAH SECTION                       */
+/* SEJARAH SECTION                             */
 /* ============================================= */
-#about {
+#sejarah {
     background: var(--cream);
     color: var(--black);
     position: relative;
@@ -287,17 +305,17 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     align-items: center;
 }
 
-.about-text p { text-align: justify; }
+.sejarah-text p { text-align: justify; }
 
 .sejarah-panjang { display: none; padding-top: 5px; }
 
-.about-expanded { grid-template-columns: 1fr !important; }
-.about-expanded .about-gallery { order: -1; margin-bottom: 5rem; }
-.about-expanded .section-title { text-align: center; }
-.about-expanded #btn-read-more { display: block; margin: 0 auto; }
-.about-expanded .swipe-gallery { height: 500px; }
+.sejarah-expanded { grid-template-columns: 1fr !important; }
+.sejarah-expanded .sejarah-galeri { order: -1; margin-bottom: 5rem; }
+.sejarah-expanded .section-title { text-align: center; }
+.sejarah-expanded #btn-read-more { display: block; margin: 0 auto; }
+.sejarah-expanded .swipe-galeri { height: 500px; }
 
-.about-gallery { position: relative; z-index: 15; }
+.sejarah-galeri { position: relative; z-index: 15; }
 
 .read-more-btn {
     display: inline-block;
@@ -316,7 +334,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 }
 .read-more-btn:hover { background: var(--gold); color: var(--cream); }
 
-.swipe-gallery {
+.swipe-galeri {
     position: relative;
     width: 100%;
     height: 600px;
@@ -354,18 +372,19 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 }
 
 /* ============================================= */
-/* GALLERY SECTION                               */
+/* GALERI SECTION                               */
 /* ============================================= */
-.gallery-section {
+.galeri-section {
     background: var(--black);
     color: var(--cream);
     position: relative;
     padding: 100px 0 20px;
+    padding-bottom: 100px;
 }
 
-.gallery-header { padding-top: 10vw; position: relative; z-index: 10; }
+.galeri-header { padding-top: 10vw; position: relative; z-index: 10; }
 
-.gallery-carousel-wrapper {
+.galeri-carousel-wrapper {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -375,14 +394,14 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     contain: layout paint;
 }
 
-.gallery-carousel {
+.galeri-carousel {
     display: flex;
     gap: 20px;
     width: max-content;
     will-change: transform;
 }
 
-.gallery-item {
+.galeri-item {
     position: relative;
     height: 350px;
     flex-shrink: 0;
@@ -393,8 +412,8 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     /* Specific property instead of transition:all to avoid triggering layout on hover */
     transition: border-color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
-.gallery-item:hover { border-color: var(--white); }
-.gallery-item img {
+.galeri-item:hover { border-color: var(--white); }
+.galeri-item img {
     width: auto;
     height: 100%;
     display: block;
@@ -402,7 +421,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     filter: grayscale(100%);
     transition: filter 0.5s ease;
 }
-.gallery-item:hover img { filter: grayscale(0%); }
+.galeri-item:hover img { filter: grayscale(0%); }
 
 /* ============================================= */
 /* LIGHTBOX                                      */
@@ -469,28 +488,26 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 /* WAWANCARA SECTION                             */
 /* ============================================= */
-.interview-section {
+.wawancara-section {
     position: relative;
-    /* background-attachment:fixed removed — it forces a full repaint on every scroll tick
-       because the browser cannot composite a fixed background independently. */
     background: url('images/11.jpg') no-repeat center center/cover;
-    color: var(--cream);
     overflow: hidden;
 }
 
-.interview-overlay {
+.wawancara-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(10,6,0,0.7);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(10,6,0,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 1;
 }
 
-.interview-content {
+.wawancara-content {
     position: relative;
     z-index: 2;
-    padding-top: 8vw;
+    padding-top: 9vw;
+    padding-bottom: 2vw;
 }
 
 .video-card-interactive {
@@ -506,7 +523,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.5);
     background: #000;
 }
 .video-wrapper video { width: 100%; display: block; outline: none; }
