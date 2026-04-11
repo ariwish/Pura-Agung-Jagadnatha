@@ -1,11 +1,6 @@
-/**
- * Pura Jagadnatha Denpasar - Stylesheet
- */
-
 /* ============================================= */
 /* FONTS & VARIABLES                             */
 /* ============================================= */
-/* Google Fonts loaded via <link> in HTML to avoid render-blocking @import */
 
 @font-face {
     font-family: 'Noto Sans Balinese Local';
@@ -16,7 +11,7 @@
     --gold: #D4AF37;
     --gold-rgb: 212, 175, 55;
     --cream: #FFF8E7;
-    --black: #1A1000;
+    --black: #1c1201;
     --white: #FFFFFF;
 
     --font-display: 'Cinzel Decorative', cursive;
@@ -123,7 +118,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     padding: 10px 0;
     background: rgba(26, 16, 0, 0.4);
     backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
     color: var(--gold);
     transition: background 0.3s ease, box-shadow 0.3s ease;
 }
@@ -131,7 +125,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 #main-nav.scrolled {
     background: rgba(10, 6, 0, 0.85);
     backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 4px 30px rgba(0,0,0,0.6);
 }
 
@@ -188,7 +181,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     position: absolute;
     background: rgba(255,248,231,0.12);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255,248,231,0.2);
     border-radius: 50px;
     z-index: -1;
@@ -284,6 +276,8 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 
 .hero-sub {
     font-size: 1.6rem;
+    font-family: var(--font-serif);
+    font-style: italic;
     color: var(--white);
     padding-top: 24px;
 }
@@ -306,7 +300,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     align-items: center;
 }
 
-.sejarah-text p { text-align: justify; }
+.sejarah-text p { text-align:justify; }
 
 .sejarah-panjang { display: none; padding-top: 5px; }
 
@@ -359,6 +353,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     border: 2px solid rgba(212,175,55,0.1);
     will-change: transform;
     transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    touch-action: none;
 }
 .swipe-card:active { cursor: grabbing; }
 .swipe-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
@@ -366,6 +361,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 .swipe-guide {
     text-align: center;
     margin-top: 15px;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--gold);
     font-size: 1.1rem;
@@ -399,6 +395,29 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     gap: 20px;
     width: max-content;
     will-change: transform;
+    transform: translate3d(0, 0, 0); /* Force Hardware Acceleration */
+}
+
+#galeri-carousel-1 {
+    animation: scroll-left 50s linear infinite;
+}
+
+#galeri-carousel-2 {
+    animation: scroll-right 50s linear infinite;
+}
+
+.galeri-carousel-wrapper:hover .galeri-carousel {
+    animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes scroll-right {
+    0% { transform: translate3d(-50%, 0, 0); }
+    100% { transform: translate3d(0, 0, 0); }
 }
 
 .galeri-item {
@@ -417,10 +436,9 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     height: 100%;
     display: block;
     pointer-events: none;
-    filter: grayscale(100%);
     transition: filter 0.5s ease;
 }
-.galeri-item:hover img { filter: grayscale(0%); }
+
 
 /* ============================================= */
 /* LIGHTBOX                                      */
@@ -436,7 +454,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     align-items: center;
     justify-content: center;
     backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
     perspective: 2000px;
 }
 .lightbox.active { display: flex; }
@@ -446,7 +463,8 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     max-height: 80vh;
     border-radius: 12px;
     box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-    transition: transform 0.15s ease-out;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.15s ease-out;
     transform-style: preserve-3d;
 }
 
@@ -489,7 +507,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 .wawancara-section {
     position: relative;
-    background: url('images/16.avif') no-repeat center center/cover;
+    background: url('images/8.avif') no-repeat center center/cover;
     overflow: hidden;
 }
 
@@ -497,8 +515,6 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     position: absolute;
     inset: 0;
     background: rgba(35, 22, 2, 0.4);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
     z-index: 1;
 }
 
@@ -542,8 +558,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     position: absolute;
     inset: 0;
     background:
-        radial-gradient(ellipse at 80% 50%, rgba(212,175,55,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse at 20% 50%, rgba(139,69,19,0.05) 0%, transparent 60%);
+        var(--black);
     pointer-events: none;
 }
 
@@ -638,7 +653,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 /* ============================================= */
 /* FOOTER                                        */
 /* ============================================= */
-.simple-footer { background: rgb(7, 7, 7); padding: 24px 0; }
+.simple-footer { background: rgb(10, 6, 0); padding: 24px 0; }
 
 .footer-inner {
     display: flex;

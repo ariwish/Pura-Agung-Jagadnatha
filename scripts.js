@@ -143,9 +143,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================
     // 5. SWIPE GALERI
     // =========================================================
-    const galeri     = document.getElementById('swipe-galeri');
+    const galeri = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
-    let isDragging    = false, startX = 0, currentX = 0;
+    let isDragging = false, startX = 0, currentX = 0;
 
     // Card list cached here; refreshed by initCards() after each DOM reorder
     let swipeCards = Array.from(galeri.querySelectorAll('.swipe-card'));
@@ -178,13 +178,21 @@ document.addEventListener('DOMContentLoaded', () => {
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
         card.style.transition = 'none';
 
+        let dragRafId = null;
         const onMove = ev => {
             if (!isDragging) return;
             currentX = (ev.type === 'mousemove' ? ev.pageX : ev.touches[0].pageX) - startX;
-            card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
+            
+            if (!dragRafId) {
+                dragRafId = requestAnimationFrame(() => {
+                    card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
+                    dragRafId = null;
+                });
+            }
         };
         const onEnd = () => {
             isDragging = false;
+            if (dragRafId) cancelAnimationFrame(dragRafId);
             card.style.transition = 'transform 0.5s ease, opacity 0.6s ease';
             if (Math.abs(currentX) > 100) {
                 const dir = currentX > 0 ? 1 : -1;
@@ -230,19 +238,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Handle image reveal on load
+    lightboxImg.onload = () => { lightboxImg.style.opacity = '1'; };
+
     function openLightbox(item, direction = null) {
         lightboxActive = true;
         const img     = item.querySelector('img');
         const caption = item.getAttribute('data-caption');
-        if (direction && lightbox.classList.contains('active')) {
-            lightboxImg.style.transition = 'opacity 0.2s ease-out';
-            lightboxImg.style.opacity    = '0';
-            setTimeout(() => { lightboxImg.src = img.src; lightboxCaption.innerText = caption || ''; lightboxImg.style.opacity = '1'; }, 150);
-            return;
-        }
+
+        // Hide current image immediately
+        lightboxImg.style.opacity = '0';
+
+        // Update content
         lightboxImg.src           = img.src;
         lightboxCaption.innerText = caption || '';
-        lightbox.classList.add('active');
+        
+        if (!lightbox.classList.contains('active')) {
+            lightbox.classList.add('active');
+        }
+
+        // Pause carousels
+        document.querySelectorAll('.galeri-carousel').forEach(c => c.style.animationPlayState = 'paused');
+
         const show = galeriItems.length > 1;
         lightboxPrev.style.display = show ? 'flex' : 'none';
         lightboxNext.style.display = show ? 'flex' : 'none';
@@ -251,10 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeLightbox = () => {
         lightboxActive = false;
         lightbox.classList.remove('active');
-        // Resume animation if it was active
-        if (galeriAnimating && !galeriRafId) {
-            galeriRafId = requestAnimationFrame(animategaleri);
-        }
+        document.querySelectorAll('.galeri-carousel').forEach(c => c.style.animationPlayState = 'running');
     };
     lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); });
     lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); });
@@ -270,21 +284,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // =========================================================
     // 7. GALERI AUTO-SCROLL
-    // Paused via IntersectionObserver when section is off-screen
     // =========================================================
     const carousel1 = document.getElementById('galeri-carousel-1');
     const carousel2 = document.getElementById('galeri-carousel-2');
 
-    // Randomize initial image order
+    // Collect all items to ensure correct distribution across rows
     const allGalleryItems = [];
     if (carousel1) allGalleryItems.push(...Array.from(carousel1.children));
     if (carousel2) allGalleryItems.push(...Array.from(carousel2.children));
-
-    // Shuffle using Fisher-Yates
-    for (let i = allGalleryItems.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [allGalleryItems[i], allGalleryItems[j]] = [allGalleryItems[j], allGalleryItems[i]];
-    }
 
     // Clear carousels
     if (carousel1) carousel1.innerHTML = '';
@@ -304,43 +311,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Clone for infinite effect after randomization
     [carousel1, carousel2].forEach(carousel => {
         if (!carousel) return;
-        Array.from(carousel.children).forEach(item => {
-            carousel.appendChild(item.cloneNode(true));
+        const children = Array.from(carousel.children);
+        children.forEach(item => {
+            const clone = item.cloneNode(true);
+            clone.classList.add('clone');
+            carousel.appendChild(clone);
         });
     });
-
-    let pos1 = 0, pos2 = 0;
-    const speed = 1.6;
-    let galeriAnimating = false;
-    let galeriRafId     = null;
-
-    function animategaleri() {
-        if (!galeriAnimating || lightboxActive) { galeriRafId = null; return; }
-        if (carousel1) {
-            pos1 += speed;
-            if (pos1 >= carousel1.scrollWidth / 2) pos1 = 0;
-            carousel1.style.transform = `translateX(-${pos1}px)`;
-        }
-        if (carousel2) {
-            pos2 += speed;
-            if (pos2 >= carousel2.scrollWidth / 2) pos2 = 0;
-            carousel2.style.transform = `translateX(${pos2 - carousel2.scrollWidth / 2}px)`;
-        }
-        galeriRafId = requestAnimationFrame(animategaleri);
-    }
-
-    const galeriSection = document.getElementById('galeri');
-    if (galeriSection) {
-        new IntersectionObserver(([entry]) => {
-            galeriAnimating = entry.isIntersecting;
-            if (galeriAnimating && !galeriRafId) {
-                galeriRafId = requestAnimationFrame(animategaleri);
-            }
-        }, { rootMargin: '200px' }).observe(galeriSection);
-    } else {
-        galeriAnimating = true;
-        galeriRafId = requestAnimationFrame(animategaleri);
-    }
 
     // =========================================================
     // 8. HERO SLIDER
