@@ -1,89 +1,67 @@
-// Set current year
 document.getElementById('year').textContent = new Date().getFullYear();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // =========================================================
-    // PRELOAD ALL IMAGES
-    // =========================================================
-    const preloadAllImages = () => {
-        const imagesToPreload = [
-            // Gallery Images
-            ...Array.from({ length: 14 }, (_, i) => `images/${i + 1}.avif`),
-            // Swipe Gallery Images
-            ...Array.from({ length: 5 }, (_, i) => `images-swipe/${i + 1}.avif`)
-        ];
+    // ── PRELOAD IMAGES ──────────────────────────────────────────
+    [...Array.from({length: 14}, (_, i) => `images/${i+1}.avif`),
+     ...Array.from({length: 5},  (_, i) => `images-swipe/${i+1}.avif`)]
+        .forEach(src => { new Image().src = src; });
 
-        imagesToPreload.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
-    };
-    preloadAllImages();
-
-    // =========================================================
-    // SCROLL REVEAL
-    // =========================================================
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    // ── SCROLL REVEAL ────────────────────────────────────────────
+    const revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
     }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
     document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-    // =========================================================
-    // SCROLLSPY & NAVBAR
-    // =========================================================
-    const sections  = document.querySelectorAll('section[id], footer');
-    const navItems  = document.querySelectorAll('.nav-links a');
-    const navPill   = document.querySelector('.nav-pill-indicator');
-    const mainNav   = document.getElementById('main-nav');
+    // ── SCROLLSPY & NAVBAR ───────────────────────────────────────
+    const sections = document.querySelectorAll('section[id], footer');
+    const navItems = document.querySelectorAll('.nav-links a');
+    const navPill  = document.querySelector('.nav-pill-indicator');
+    const mainNav  = document.getElementById('main-nav');
 
-    // Cache layout metrics; invalidated on resize to avoid repeated reads during scroll
-    let sectionTops       = [];
-    let cachedScrollHeight = 0;
-
-    function cacheSectionMetrics() {
+    let sectionTops = [], cachedScrollHeight = 0;
+    const cacheSectionMetrics = () => {
         cachedScrollHeight = document.documentElement.scrollHeight;
         sectionTops = Array.from(sections).map(s => s.offsetTop);
-    }
+    };
     cacheSectionMetrics();
 
-    function updateNavPill(link) {
+    const updateNavPill = link => {
         if (!link || !navPill) return;
         navPill.classList.add('visible');
-        navPill.style.width  = `${link.offsetWidth}px`;
-        navPill.style.height = `${link.offsetHeight}px`;
-        navPill.style.left   = `${link.offsetLeft}px`;
-        navPill.style.top    = `${link.offsetTop}px`;
-    }
+        Object.assign(navPill.style, {
+            width:  `${link.offsetWidth}px`,
+            height: `${link.offsetHeight}px`,
+            left:   `${link.offsetLeft}px`,
+            top:    `${link.offsetTop}px`,
+        });
+    };
 
-    function updateActiveNav() {
-        let activeId = '';
+    const updateActiveNav = () => {
         const scrollY = window.scrollY;
+        let activeId = scrollY < 100 ? 'home'
+            : scrollY + window.innerHeight >= cachedScrollHeight - 50 ? 'lokasi' : '';
 
-        if (scrollY + window.innerHeight >= cachedScrollHeight - 50) {
-            activeId = 'lokasi';
-        } else if (scrollY < 100) {
-            activeId = 'home';
-        } else {
+        if (!activeId) {
             sectionTops.forEach((top, i) => {
-                const s = sections[i];
-                if (s.tagName === 'FOOTER') return;
-                if (scrollY >= top - 150) activeId = s.id;
+                if (sections[i].tagName !== 'FOOTER' && scrollY >= top - 150)
+                    activeId = sections[i].id;
             });
         }
 
         if (activeId) {
             let found = null;
             navItems.forEach(link => {
-                const isActive = link.getAttribute('href') === `#${activeId}`;
-                link.classList.toggle('active', isActive);
-                if (isActive) found = link;
+                const active = link.getAttribute('href') === `#${activeId}`;
+                link.classList.toggle('active', active);
+                if (active) found = link;
             });
             if (found) updateNavPill(found);
         }
-    }
+    };
 
+    // Shared RAF-throttled scroll handler
     let scrollPending = false;
-    function onScroll() {
+    window.addEventListener('scroll', () => {
         if (scrollPending) return;
         scrollPending = true;
         requestAnimationFrame(() => {
@@ -91,103 +69,82 @@ document.addEventListener('DOMContentLoaded', () => {
             mainNav.classList.toggle('scrolled', window.scrollY > 50);
             updateActiveNav();
         });
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
+    }, { passive: true });
 
-    // Debounced resize: re-cache layout metrics, then update nav state
+    // Debounced resize
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-            cacheSectionMetrics();
-            updateActiveNav();
-        }, 150);
+        resizeTimer = setTimeout(() => { cacheSectionMetrics(); updateActiveNav(); }, 150);
     }, { passive: true });
 
-    // IntersectionObserver-based scrollspy to handle initial visible state
-    const spyObserver = new IntersectionObserver(() => updateActiveNav(), {
-        rootMargin: '-10% 0px -50% 0px', threshold: 0
-    });
+    const spyObserver = new IntersectionObserver(updateActiveNav, { rootMargin: '-10% 0px -50% 0px', threshold: 0 });
     sections.forEach(s => spyObserver.observe(s));
     window.addEventListener('load', updateActiveNav);
     setTimeout(updateActiveNav, 300);
 
-    // =========================================================
-    // SMOOTH SCROLL
-    // =========================================================
+    // ── SMOOTH SCROLL ────────────────────────────────────────────
     document.querySelectorAll('a[href^="#"]').forEach(link => {
         link.addEventListener('click', e => {
             const href = link.getAttribute('href');
             if (!href || href === '#') return;
             e.preventDefault();
             const target = document.querySelector(href);
-            if (target) {
-                // Read offsetHeight fresh on click (nav height can change on resize)
+            if (target)
                 window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - mainNav.offsetHeight - 20, behavior: 'smooth' });
-            }
         });
     });
 
-    // =========================================================
-    // MOBILE MENU TOGGLE
-    // =========================================================
+    // ── MOBILE MENU ──────────────────────────────────────────────
     const mobileMenuBtn = document.getElementById('mobile-menu');
     const navLinksList  = document.querySelector('.nav-links');
-
     const closeMobileMenu = () => {
         navLinksList.classList.remove('nav-active');
         mobileMenuBtn.classList.remove('toggle-active');
     };
 
-    mobileMenuBtn.addEventListener('click', (e) => {
+    mobileMenuBtn.addEventListener('click', e => {
         e.stopPropagation();
         navLinksList.classList.toggle('nav-active');
         mobileMenuBtn.classList.toggle('toggle-active');
     });
-
-    // Close on link click
-    navLinksList.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeMobileMenu);
-    });
-
-    // Close on click outside
-    document.addEventListener('click', (e) => {
-        if (navLinksList.classList.contains('nav-active') && !navLinksList.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+    navLinksList.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
+    document.addEventListener('click', e => {
+        if (navLinksList.classList.contains('nav-active') &&
+            !navLinksList.contains(e.target) && !mobileMenuBtn.contains(e.target))
             closeMobileMenu();
-        }
     });
 
-    // =========================================================
-    // SWIPE GALERI
-    // =========================================================
-    const galeri = document.getElementById('swipe-galeri');
+    // ── SWIPE GALLERY ────────────────────────────────────────────
+    const galeri     = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
-    let isDragging = false, startX = 0, currentX = 0;
+    let swipeCards = [], isDragging = false, startX = 0, currentX = 0;
 
-    // Card list cached here; refreshed by initCards() after each DOM reorder
-    let swipeCards = Array.from(galeri.querySelectorAll('.swipe-card'));
-
-    function initCards() {
+    const initCards = () => {
         const isExpanded = document.querySelector('#sejarah .container')?.classList.contains('sejarah-expanded');
-        swipeCards = Array.from(galeri.querySelectorAll('.swipe-card')); // refresh after appendChild reorder
+        swipeCards = Array.from(galeri.querySelectorAll('.swipe-card'));
         swipeCards.forEach((card, i) => {
             card.style.zIndex     = swipeCards.length - i;
-            card.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s ease';
+            card.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), opacity 0.6s ease';
             if (isExpanded) {
-                if (i === 0)      { card.style.transform = 'translateX(0) scale(1) rotate(0deg)'; card.style.opacity = '1'; }
-                else if (i === 1) { card.style.transform = 'translateX(-60px) translateY(20px) scale(0.9) rotate(-15deg)'; card.style.opacity = '0.8'; }
-                else if (i === 2) { card.style.transform = 'translateX(60px) translateY(20px) scale(0.9) rotate(15deg)'; card.style.opacity = '0.8'; }
-                else              { card.style.transform = 'translateX(0) translateY(40px) scale(0.8) rotate(0deg)'; card.style.opacity = '0'; }
+                const configs = [
+                    ['translateX(0) scale(1) rotate(0deg)',                    '1'],
+                    ['translateX(-60px) translateY(20px) scale(0.9) rotate(-15deg)', '0.8'],
+                    ['translateX(60px) translateY(20px) scale(0.9) rotate(15deg)',   '0.8'],
+                ];
+                const [t, o] = configs[i] ?? ['translateX(0) translateY(40px) scale(0.8) rotate(0deg)', '0'];
+                card.style.transform = t;
+                card.style.opacity   = o;
             } else {
                 card.style.transformOrigin = 'bottom center';
-                if (i < 3) { card.style.transform = `scale(${1 - i * 0.05}) translateY(${i * 15}px)`; card.style.opacity = '1'; }
-                else        { card.style.transform = `scale(0.9) translateY(30px)`;                    card.style.opacity = '0'; }
+                card.style.transform = i < 3 ? `scale(${1 - i * 0.05}) translateY(${i * 15}px)` : 'scale(0.9) translateY(30px)';
+                card.style.opacity   = i < 3 ? '1' : '0';
             }
         });
-    }
+    };
     initCards();
 
-    function startDrag(e) {
+    const startDrag = e => {
         const card = e.currentTarget;
         if (card !== swipeCards[0]) return;
         if (swipeGuideEl) swipeGuideEl.style.opacity = '0';
@@ -195,21 +152,18 @@ document.addEventListener('DOMContentLoaded', () => {
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
         card.style.transition = 'none';
 
-        let dragRafId = null;
+        let rafId = null;
         const onMove = ev => {
             if (!isDragging) return;
             currentX = (ev.type === 'mousemove' ? ev.pageX : ev.touches[0].pageX) - startX;
-            
-            if (!dragRafId) {
-                dragRafId = requestAnimationFrame(() => {
-                    card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
-                    dragRafId = null;
-                });
-            }
+            if (!rafId) rafId = requestAnimationFrame(() => {
+                card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
+                rafId = null;
+            });
         };
         const onEnd = () => {
             isDragging = false;
-            if (dragRafId) cancelAnimationFrame(dragRafId);
+            if (rafId) cancelAnimationFrame(rafId);
             card.style.transition = 'transform 0.5s ease, opacity 0.6s ease';
             if (Math.abs(currentX) > 100) {
                 const dir = currentX > 0 ? 1 : -1;
@@ -217,148 +171,120 @@ document.addEventListener('DOMContentLoaded', () => {
                 card.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 90}deg)`;
                 setTimeout(() => { galeri.appendChild(card); initCards(); }, 400);
             } else { initCards(); }
-            window.removeEventListener('mousemove', onMove);
-            window.removeEventListener('mouseup', onEnd);
-            window.removeEventListener('touchmove', onMove);
-            window.removeEventListener('touchend', onEnd);
+            window.removeEventListener('mousemove',  onMove);
+            window.removeEventListener('mouseup',    onEnd);
+            window.removeEventListener('touchmove',  onMove);
+            window.removeEventListener('touchend',   onEnd);
             currentX = 0;
         };
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onEnd);
-        window.addEventListener('touchmove', onMove, { passive: true });
-        window.addEventListener('touchend', onEnd, { passive: true });
-    }
-    swipeCards.forEach(card => {
-        card.addEventListener('mousedown', startDrag);
+        window.addEventListener('mousemove',  onMove);
+        window.addEventListener('mouseup',    onEnd);
+        window.addEventListener('touchmove',  onMove, { passive: true });
+        window.addEventListener('touchend',   onEnd,  { passive: true });
+    };
+    galeri.querySelectorAll('.swipe-card').forEach(card => {
+        card.addEventListener('mousedown',  startDrag);
         card.addEventListener('touchstart', startDrag, { passive: true });
     });
 
-    // =========================================================
-    // LIGHTBOX
-    // =========================================================
+    // ── LIGHTBOX ─────────────────────────────────────────────────
     const lightbox        = document.getElementById('lightbox');
     const lightboxImg     = document.getElementById('lightbox-img');
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxPrev    = document.getElementById('lightbox-prev');
     const lightboxNext    = document.getElementById('lightbox-next');
-    let galeriItems = [], originalgaleriItems = [], currentIndex = -1, lightboxActive = false;
+    const carousels       = document.querySelectorAll('.galeri-carousel');
+    let galeriItems = [], originalgaleriItems = [], currentIndex = -1;
+
+    const setCarouselPlay = state => carousels.forEach(c => c.style.animationPlayState = state);
 
     document.addEventListener('click', e => {
         const item = e.target.closest('.galeri-item');
-        if (item?.closest('.galeri-carousel-wrapper')) {
-            const idx = item.getAttribute('data-index');
-            if (idx !== null) { 
-                galeriItems = originalgaleriItems; 
-                currentIndex = parseInt(idx); 
-                openLightbox(galeriItems[currentIndex]); 
-            }
+        if (!item?.closest('.galeri-carousel-wrapper')) return;
+        const idx = item.getAttribute('data-index');
+        if (idx !== null) {
+            galeriItems = originalgaleriItems;
+            currentIndex = +idx;
+            openLightbox(galeriItems[currentIndex]);
         }
     });
 
-    // Handle image reveal on load
     lightboxImg.onload = () => { lightboxImg.style.opacity = '1'; };
 
-    function openLightbox(item, direction = null) {
-        lightboxActive = true;
-        const img     = item.querySelector('img');
-        const caption = item.getAttribute('data-caption');
-
-        // Hide current image immediately
+    const openLightbox = item => {
         lightboxImg.style.opacity = '0';
-
-        // Update content
-        lightboxImg.src           = img.src;
-        lightboxCaption.innerText = caption || '';
-        
-        if (!lightbox.classList.contains('active')) {
-            lightbox.classList.add('active');
-        }
-
-        // Pause carousels
-        document.querySelectorAll('.galeri-carousel').forEach(c => c.style.animationPlayState = 'paused');
-
+        lightboxImg.src           = item.querySelector('img').src;
+        lightboxCaption.innerText = item.getAttribute('data-caption') || '';
+        lightbox.classList.add('active');
+        setCarouselPlay('paused');
         const show = galeriItems.length > 1;
-        lightboxPrev.style.display = show ? 'flex' : 'none';
-        lightboxNext.style.display = show ? 'flex' : 'none';
-    }
+        lightboxPrev.style.display = lightboxNext.style.display = show ? 'flex' : 'none';
+    };
 
     const closeLightbox = () => {
-        lightboxActive = false;
         lightbox.classList.remove('active');
-        document.querySelectorAll('.galeri-carousel').forEach(c => c.style.animationPlayState = 'running');
+        setCarouselPlay('running');
     };
-    lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); });
-    lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); });
+
+    lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex]); });
+    lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex]); });
     document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
 
     document.addEventListener('keydown', e => {
         if (!lightbox.classList.contains('active')) return;
-        if      (e.key === 'ArrowLeft')  { currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'prev'); }
-        else if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex], 'next'); }
+        if (e.key === 'ArrowLeft')  { currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex]); }
+        else if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex]); }
         else if (e.key === 'Escape')     closeLightbox();
     });
 
-    // =========================================================
-    // GALERI AUTO-SCROLL
-    // =========================================================
+    // ── GALLERY CAROUSEL SETUP ───────────────────────────────────
     const carousel1 = document.getElementById('galeri-carousel-1');
     const carousel2 = document.getElementById('galeri-carousel-2');
+    const allItems  = [...(carousel1?.children ?? []), ...(carousel2?.children ?? [])];
 
-    // Collect all items to ensure correct distribution across rows
-    const allGalleryItems = [];
-    if (carousel1) allGalleryItems.push(...Array.from(carousel1.children));
-    if (carousel2) allGalleryItems.push(...Array.from(carousel2.children));
-
-    // Clear carousels
     if (carousel1) carousel1.innerHTML = '';
     if (carousel2) carousel2.innerHTML = '';
 
-    // Re-distribute and Setup Infinite Scroll
-    const midpoint = Math.ceil(allGalleryItems.length / 2);
-    allGalleryItems.forEach((item, i) => {
-        const targetCarousel = (i < midpoint) ? carousel1 : carousel2;
-        if (!targetCarousel) return;
-
+    const mid = Math.ceil(allItems.length / 2);
+    allItems.forEach((item, i) => {
+        const target = i < mid ? carousel1 : carousel2;
+        if (!target) return;
         item.setAttribute('data-index', originalgaleriItems.length);
         originalgaleriItems.push(item);
-        targetCarousel.appendChild(item);
+        target.appendChild(item);
     });
 
-    // Clone for infinite effect after randomization
-    [carousel1, carousel2].forEach(carousel => {
-        if (!carousel) return;
-        const children = Array.from(carousel.children);
-        children.forEach(item => {
+    [carousel1, carousel2].forEach(c => {
+        if (!c) return;
+        Array.from(c.children).forEach(item => {
             const clone = item.cloneNode(true);
             clone.classList.add('clone');
-            carousel.appendChild(clone);
+            c.appendChild(clone);
         });
+        requestAnimationFrame(() => c.classList.add('is-ready'));
     });
 
-    // =========================================================
-    // HERO BANNER SLIDE
-    // =========================================================
+    // ── HERO SLIDER ──────────────────────────────────────────────
     const heroSlider = document.getElementById('hero-slider');
     const heroDots   = document.querySelectorAll('.hero-dot');
     let heroIndex = 0, heroInterval = null;
 
-    function updateHeroSlider() {
+    const updateHeroSlider = () => {
         heroSlider.style.transition = 'transform 0.6s ease-in-out';
         heroSlider.style.transform  = `translateX(-${heroIndex * 100 / 3}%)`;
         heroDots.forEach((d, i) => d.classList.toggle('active', i === heroIndex));
-    }
-
-    function startHeroAuto() {
+    };
+    const startHeroAuto = () => {
         clearInterval(heroInterval);
         heroInterval = setInterval(() => { heroIndex = (heroIndex + 1) % 3; updateHeroSlider(); }, 5000);
-    }
+    };
 
     if (heroSlider) {
         startHeroAuto();
         heroDots.forEach(dot => {
             dot.addEventListener('click', e => {
-                heroIndex = parseInt(e.target.getAttribute('data-index'));
+                heroIndex = +e.target.getAttribute('data-index');
                 updateHeroSlider();
                 startHeroAuto();
             });
@@ -374,20 +300,18 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isDragHero) return;
             isDragHero = false;
             const walk = e.pageX - heroStartX;
-            if      (walk < -100 && heroIndex < 2) heroIndex++;
-            else if (walk >  100 && heroIndex > 0) heroIndex--;
+            if (walk < -100 && heroIndex < 2) heroIndex++;
+            else if (walk > 100 && heroIndex > 0) heroIndex--;
             updateHeroSlider();
             startHeroAuto();
         });
     }
 
-    // =========================================================
-    // READ MORE / SEJARAH
-    // =========================================================
-    const btnReadMore    = document.getElementById('btn-read-more');
-    const sejarahPanjang = document.getElementById('sejarah-panjang');
+    // ── READ MORE / SEJARAH ──────────────────────────────────────
+    const btnReadMore      = document.getElementById('btn-read-more');
+    const sejarahPanjang   = document.getElementById('sejarah-panjang');
     const sejarahContainer = document.querySelector('#sejarah .container');
-    const sejarahSection   = document.getElementById('sejarah'); // cached — avoids getElementById on every click
+    const sejarahSection   = document.getElementById('sejarah');
 
     if (btnReadMore && sejarahPanjang) {
         btnReadMore.addEventListener('click', () => {
@@ -396,12 +320,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             sejarahPanjang.style.display = isOpen ? 'none' : 'block';
             sejarahContainer?.classList.toggle('sejarah-expanded', !isOpen);
-            btnReadMore.innerHTML       = isOpen ? 'Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i>' : 'Tutup Sejarah <i class="fa-solid fa-chevron-up"></i>';
+            btnReadMore.innerHTML       = isOpen
+                ? 'Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i>'
+                : 'Tutup Sejarah <i class="fa-solid fa-chevron-up"></i>';
             btnReadMore.style.marginTop = isOpen ? '25px' : '40px';
             if (quoteBox)    quoteBox.style.display    = isOpen ? 'block' : 'none';
             if (swipeGuideEl) swipeGuideEl.style.display = isOpen ? 'block' : 'none';
 
-            const navH = mainNav.offsetHeight; // fresh read on user click (not in a hot loop)
+            const navH = mainNav.offsetHeight;
             setTimeout(() => {
                 window.scrollTo({ top: sejarahSection.getBoundingClientRect().top + window.scrollY - navH - 20, behavior: 'smooth' });
             }, isOpen ? 100 : 50);
@@ -409,24 +335,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================================================
-    // 3D TILT — LIGHTBOX IMAGE
-    // =========================================================
+    // ── 3D TILT — LIGHTBOX ───────────────────────────────────────
     let vpW = window.innerWidth, vpH = window.innerHeight;
     window.addEventListener('resize', () => { vpW = window.innerWidth; vpH = window.innerHeight; }, { passive: true });
 
     if (lightbox && lightboxImg) {
         lightbox.addEventListener('mousemove', e => {
             if (!lightbox.classList.contains('active')) return;
-            const cx = vpW / 2, cy = vpH / 2;
-            const dx = e.clientX - cx, dy = e.clientY - cy;
+            const dx = e.clientX - vpW / 2, dy = e.clientY - vpH / 2;
             const mx = vpW * 0.4, my = vpH * 0.4;
             if (Math.abs(dx) > mx || Math.abs(dy) > my) {
                 lightboxImg.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)';
                 return;
             }
             lightboxImg.style.transition = 'transform 0.1s ease-out';
-            lightboxImg.style.transform  = `perspective(1000px) rotateX(${(dy / my) * -12}deg) rotateY(${(dx / mx) * 12}deg) scale3d(1.05,1.05,1.05)`;
+            lightboxImg.style.transform  = `perspective(1000px) rotateX(${(dy/my)*-12}deg) rotateY(${(dx/mx)*12}deg) scale3d(1.05,1.05,1.05)`;
         });
         lightbox.addEventListener('mouseleave', () => {
             lightboxImg.style.transition = 'transform 0.5s ease-out';
@@ -434,29 +357,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // =========================================================
-    // 3D TILT — GOOGLE MAP
-    // =========================================================
+    // ── 3D TILT — GOOGLE MAP ─────────────────────────────────────
     const mapBox     = document.querySelector('.lokasi-map-box');
     const mapOverlay = document.getElementById('map-overlay');
+    const MAP_RESET  = { transform: 'rotateX(0) rotateY(0) translateY(0) scale3d(1,1,1)', boxShadow: '0 25px 60px rgba(0,0,0,0.55)' };
 
     if (mapBox && mapOverlay) {
         mapBox.addEventListener('mousemove', e => {
             if (mapOverlay.classList.contains('hidden')) return;
-            const rect    = mapBox.getBoundingClientRect();
-            const rotateX = ((e.clientY - rect.top  - rect.height / 2) / (rect.height / 2)) * -12;
-            const rotateY = ((e.clientX - rect.left - rect.width  / 2) / (rect.width  / 2)) *  12;
-            mapBox.style.transform  = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-10px) scale3d(1.05,1.05,1.05)`;
-            mapBox.style.boxShadow  = `${-rotateY}px ${rotateX + 30}px 60px rgba(0,0,0,0.6)`;
+            const { top, left, width, height } = mapBox.getBoundingClientRect();
+            const rX = ((e.clientY - top  - height / 2) / (height / 2)) * -12;
+            const rY = ((e.clientX - left - width  / 2) / (width  / 2)) *  12;
+            mapBox.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) translateY(-10px) scale3d(1.05,1.05,1.05)`;
+            mapBox.style.boxShadow = `${-rY}px ${rX + 30}px 60px rgba(0,0,0,0.6)`;
         });
-        mapBox.addEventListener('mouseleave', () => {
-            mapBox.style.transform = 'rotateX(0) rotateY(0) translateY(0) scale3d(1,1,1)';
-            mapBox.style.boxShadow = '0 25px 60px rgba(0,0,0,0.55)';
-        });
+        mapBox.addEventListener('mouseleave', () => Object.assign(mapBox.style, MAP_RESET));
         mapOverlay.addEventListener('click', () => {
             mapOverlay.classList.add('hidden');
-            mapBox.style.transform = 'rotateX(0) rotateY(0) translateY(0) scale3d(1,1,1)';
-            mapBox.style.boxShadow = '0 25px 60px rgba(0,0,0,0.55)';
+            Object.assign(mapBox.style, MAP_RESET);
         });
     }
 });
