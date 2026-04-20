@@ -78,17 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('load', updateActiveNav);
     setTimeout(updateActiveNav, 300);
 
-    // ── SMOOTH SCROLL ────────────────────────────────────────────
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener('click', e => {
-            const href = link.getAttribute('href');
-            if (!href || href === '#') return;
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target)
-                window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - mainNav.offsetHeight - 20, behavior: 'smooth' });
-        });
-    });
 
     // ── MOBILE MENU ──────────────────────────────────────────────
     const mobileMenuBtn = document.getElementById('mobile-menu');
