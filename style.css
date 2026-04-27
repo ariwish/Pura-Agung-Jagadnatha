@@ -185,7 +185,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
     justify-content: center; align-items: center; perspective: 1000px; z-index: 100;
 }
 .swipe-card {
-    position: absolute; width: 368px; height: 552px; background: var(--black);
+    position: absolute; width: 368px; height: 552px; background: #222;
     border-radius: var(--border-radius); overflow: hidden; cursor: grab;
     transform-origin: bottom center; user-select: none; border: 2px solid rgba(212, 175, 55, 0.1);
     will-change: transform; transition: transform 0.6s var(--ease-out); touch-action: none;
@@ -223,7 +223,7 @@ a { text-decoration: none; color: inherit; transition: color 0.3s ease; }
 .galeri-item {
     position: relative; height: 350px; flex-shrink: 0; margin-right: 20px;
     overflow: hidden; border-radius: var(--border-radius); border: 2px solid transparent;
-    backface-visibility: hidden; transition: all 0.25s var(--ease-out);
+    backface-visibility: hidden; transition: all 0.25s var(--ease-out); background: #222;
 }
 .galeri-item:hover { border-color: var(--white); }
 .galeri-item img {
