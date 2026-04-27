@@ -1,106 +1,55 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // ── SCROLL REVEAL ────────────────────────────────────────────
-    const revealObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
-    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-    // ── SCROLLSPY & NAVBAR ───────────────────────────────────────
-    const sections = document.querySelectorAll('section[id], footer');
+    // ── SCROLL REVEAL & SCROLLSPY ───────────────────────────────
+    const navPill = document.querySelector('.nav-pill-indicator');
+    const mainNav = document.getElementById('main-nav');
     const navItems = document.querySelectorAll('.nav-links a');
-    const navPill  = document.querySelector('.nav-pill-indicator');
-    const mainNav  = document.getElementById('main-nav');
-
-    let sectionTops = [], cachedScrollHeight = 0;
-    const cacheSectionMetrics = () => {
-        cachedScrollHeight = document.documentElement.scrollHeight;
-        sectionTops = Array.from(sections).map(s => s.offsetTop);
-    };
-    cacheSectionMetrics();
+    const sections = document.querySelectorAll('section[id], footer');
 
     const updateNavPill = link => {
         if (!link || !navPill) return;
         navPill.classList.add('visible');
-        Object.assign(navPill.style, {
-            width:  `${link.offsetWidth}px`,
-            height: `${link.offsetHeight}px`,
-            left:   `${link.offsetLeft}px`,
-            top:    `${link.offsetTop}px`,
+        const { offsetWidth: w, offsetHeight: h, offsetLeft: l, offsetTop: t } = link;
+        Object.assign(navPill.style, { width: `${w}px`, height: `${h}px`, left: `${l}px`, top: `${t}px` });
+    };
+
+    // Combined Intersection Observer for Reveal and Scrollspy
+    const observerOptions = { threshold: [0, 0.1, 0.5, 0.8], rootMargin: '-10% 0px -20% 0px' };
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            // Reveal logic
+            if (entry.isIntersecting && entry.target.classList.contains('reveal')) {
+                entry.target.classList.add('active');
+            }
+            
+            // Scrollspy logic
+            if (entry.isIntersecting && entry.target.tagName !== 'FOOTER') {
+                const id = entry.target.getAttribute('id');
+                navItems.forEach(link => {
+                    const isActive = link.getAttribute('href') === `#${id}`;
+                    link.classList.toggle('active', isActive);
+                    if (isActive) updateNavPill(link);
+                });
+            }
         });
-    };
+    }, observerOptions);
 
-    const updateActiveNav = () => {
-        const scrollY = window.scrollY;
-        let activeId = scrollY < 100 ? 'home'
-            : scrollY + window.innerHeight >= cachedScrollHeight - 50 ? 'lokasi' : '';
+    sections.forEach(s => observer.observe(s));
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-        if (!activeId) {
-            sectionTops.forEach((top, i) => {
-                if (sections[i].tagName !== 'FOOTER' && scrollY >= top - 150)
-                    activeId = sections[i].id;
-            });
-        }
-
-        if (activeId) {
-            let found = null;
-            navItems.forEach(link => {
-                const active = link.getAttribute('href') === `#${activeId}`;
-                link.classList.toggle('active', active);
-                if (active) found = link;
-            });
-            if (found) updateNavPill(found);
-        }
-    };
-
-    // Shared RAF-throttled scroll handler
-    let scrollPending = false;
     window.addEventListener('scroll', () => {
-        if (scrollPending) return;
-        scrollPending = true;
-        requestAnimationFrame(() => {
-            scrollPending = false;
-            mainNav.classList.toggle('scrolled', window.scrollY > 50);
-            updateActiveNav();
-        });
+        mainNav.classList.toggle('scrolled', window.scrollY > 50);
     }, { passive: true });
-
-    // Debounced resize
-    let resizeTimer;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => { cacheSectionMetrics(); updateActiveNav(); }, 150);
-    }, { passive: true });
-
-    const spyObserver = new IntersectionObserver(updateActiveNav, { rootMargin: '-10% 0px -50% 0px', threshold: 0 });
-    sections.forEach(s => spyObserver.observe(s));
-    window.addEventListener('load', updateActiveNav);
-    setTimeout(updateActiveNav, 300);
-
 
     // ── MOBILE MENU ──────────────────────────────────────────────
-    const mobileMenuBtn = document.getElementById('mobile-menu');
-    const navLinksList  = document.querySelector('.nav-links');
-    const closeMobileMenu = () => {
-        navLinksList.classList.remove('nav-active');
-        mobileMenuBtn.classList.remove('toggle-active');
-    };
-
-    mobileMenuBtn.addEventListener('click', e => {
-        e.stopPropagation();
-        navLinksList.classList.toggle('nav-active');
-        mobileMenuBtn.classList.toggle('toggle-active');
-    });
-    navLinksList.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
-    document.addEventListener('click', e => {
-        if (navLinksList.classList.contains('nav-active') &&
-            !navLinksList.contains(e.target) && !mobileMenuBtn.contains(e.target))
-            closeMobileMenu();
-    });
+    const navToggle = document.getElementById('nav-toggle');
+    document.querySelectorAll('.nav-links a').forEach(link => 
+        link.addEventListener('click', () => navToggle.checked = false)
+    );
 
     // ── SWIPE GALLERY ────────────────────────────────────────────
-    const galeri     = document.getElementById('swipe-galeri');
+    const galeri = document.getElementById('swipe-galeri');
     const swipeGuideEl = document.getElementById('swipe-guide');
     let swipeCards = [], isDragging = false, startX = 0, currentX = 0;
 
@@ -108,21 +57,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const isExpanded = document.querySelector('#sejarah .container')?.classList.contains('sejarah-expanded');
         swipeCards = Array.from(galeri.querySelectorAll('.swipe-card'));
         swipeCards.forEach((card, i) => {
-            card.style.zIndex     = swipeCards.length - i;
+            card.style.zIndex = swipeCards.length - i;
             card.style.transition = 'transform 0.6s cubic-bezier(0.23,1,0.32,1), opacity 0.6s ease';
             if (isExpanded) {
-                const configs = [
-                    ['translateX(0) scale(1) rotate(0deg)',                    '1'],
-                    ['translateX(-60px) translateY(20px) scale(0.9) rotate(-15deg)', '0.8'],
-                    ['translateX(60px) translateY(20px) scale(0.9) rotate(15deg)',   '0.8'],
-                ];
-                const [t, o] = configs[i] ?? ['translateX(0) translateY(40px) scale(0.8) rotate(0deg)', '0'];
-                card.style.transform = t;
-                card.style.opacity   = o;
+                const configs = [['0,0,1,0', '1'], ['-60px,20px,0.9,-15deg', '0.8'], ['60px,20px,0.9,15deg', '0.8']];
+                const [cfg, o] = configs[i] ?? ['0,40px,0.8,0', '0'];
+                const [x, y, s, r] = cfg.split(',');
+                card.style.transform = `translateX(${x}) translateY(${y}) scale(${s}) rotate(${r})`;
+                card.style.opacity = o;
             } else {
                 card.style.transformOrigin = 'bottom center';
                 card.style.transform = i < 3 ? `scale(${1 - i * 0.05}) translateY(${i * 15}px)` : 'scale(0.9) translateY(30px)';
-                card.style.opacity   = i < 3 ? '1' : '0';
+                card.style.opacity = i < 3 ? '1' : '0';
             }
         });
     };
@@ -136,229 +82,109 @@ document.addEventListener('DOMContentLoaded', () => {
         startX = e.type === 'mousedown' ? e.pageX : e.touches[0].pageX;
         card.style.transition = 'none';
 
-        let rafId = null;
         const onMove = ev => {
             if (!isDragging) return;
             currentX = (ev.type === 'mousemove' ? ev.pageX : ev.touches[0].pageX) - startX;
-            if (!rafId) rafId = requestAnimationFrame(() => {
-                card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
-                rafId = null;
-            });
+            card.style.transform = `translateX(${currentX}px) rotate(${currentX / 10}deg)`;
         };
         const onEnd = () => {
             isDragging = false;
-            if (rafId) cancelAnimationFrame(rafId);
             card.style.transition = 'transform 0.5s ease, opacity 0.6s ease';
             if (Math.abs(currentX) > 100) {
                 const dir = currentX > 0 ? 1 : -1;
-                card.style.opacity   = '0';
+                card.style.opacity = '0';
                 card.style.transform = `translateX(${dir * 1000}px) rotate(${dir * 90}deg)`;
                 setTimeout(() => { galeri.appendChild(card); initCards(); }, 400);
             } else { initCards(); }
-            window.removeEventListener('mousemove',  onMove);
-            window.removeEventListener('mouseup',    onEnd);
-            window.removeEventListener('touchmove',  onMove);
-            window.removeEventListener('touchend',   onEnd);
+            window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onEnd);
+            window.removeEventListener('touchmove', onMove); window.removeEventListener('touchend', onEnd);
             currentX = 0;
         };
-        window.addEventListener('mousemove',  onMove);
-        window.addEventListener('mouseup',    onEnd);
-        window.addEventListener('touchmove',  onMove, { passive: true });
-        window.addEventListener('touchend',   onEnd,  { passive: true });
+        window.addEventListener('mousemove', onMove); window.addEventListener('mouseup', onEnd);
+        window.addEventListener('touchmove', onMove); window.addEventListener('touchend', onEnd);
     };
     galeri.querySelectorAll('.swipe-card').forEach(card => {
-        card.addEventListener('mousedown',  startDrag);
+        card.addEventListener('mousedown', startDrag);
         card.addEventListener('touchstart', startDrag, { passive: true });
     });
 
     // ── LIGHTBOX ─────────────────────────────────────────────────
-    const lightbox        = document.getElementById('lightbox');
-    const lightboxImg     = document.getElementById('lightbox-img');
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const lightboxPrev    = document.getElementById('lightbox-prev');
-    const lightboxNext    = document.getElementById('lightbox-next');
-    const carousels       = document.querySelectorAll('.galeri-carousel');
-    let galeriItems = [], originalgaleriItems = [], currentIndex = -1;
+    const lightbox = document.getElementById('lightbox'), lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption'), carousels = document.querySelectorAll('.galeri-carousel');
+    let galeriItems = Array.from(document.querySelectorAll('.galeri-item:not(.clone)')), currentIndex = -1;
 
-    const setCarouselPlay = state => carousels.forEach(c => c.style.animationPlayState = state);
+    const openLightbox = index => {
+        currentIndex = index;
+        const item = galeriItems[currentIndex];
+        lightboxImg.style.opacity = '0';
+        lightboxImg.src = item.querySelector('img').src;
+        lightboxCaption.innerText = item.getAttribute('data-caption') || '';
+        lightbox.classList.add('active');
+        carousels.forEach(c => c.style.animationPlayState = 'paused');
+    };
 
     document.addEventListener('click', e => {
         const item = e.target.closest('.galeri-item');
-        if (!item?.closest('.galeri-carousel-wrapper')) return;
-        const idx = item.getAttribute('data-index');
-        if (idx !== null) {
-            galeriItems = originalgaleriItems;
-            currentIndex = +idx;
-            openLightbox(galeriItems[currentIndex]);
+        if (item) openLightbox(galeriItems.indexOf(item.classList.contains('clone') ? galeriItems.find(i => i.querySelector('img').src === item.querySelector('img').src) : item));
+        if (e.target.closest('.lightbox-close') || e.target === lightbox) {
+            lightbox.classList.remove('active');
+            carousels.forEach(c => c.style.animationPlayState = 'running');
         }
     });
 
-    lightboxImg.onload = () => { lightboxImg.style.opacity = '1'; };
-
-    const openLightbox = item => {
-        lightboxImg.style.opacity = '0';
-        lightboxImg.src           = item.querySelector('img').src;
-        lightboxCaption.innerText = item.getAttribute('data-caption') || '';
-        lightbox.classList.add('active');
-        setCarouselPlay('paused');
-        const show = galeriItems.length > 1;
-        lightboxPrev.style.display = lightboxNext.style.display = show ? 'flex' : 'none';
-    };
-
-    const closeLightbox = () => {
-        lightbox.classList.remove('active');
-        setCarouselPlay('running');
-    };
-
-    lightboxPrev.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex]); });
-    lightboxNext.addEventListener('click', e => { e.stopPropagation(); currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex]); });
-    document.querySelector('.lightbox-close').addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
-
+    lightboxImg.onload = () => lightboxImg.style.opacity = '1';
+    const navigate = dir => { currentIndex = (currentIndex + dir + galeriItems.length) % galeriItems.length; openLightbox(currentIndex); };
+    document.getElementById('lightbox-prev').onclick = e => { e.stopPropagation(); navigate(-1); };
+    document.getElementById('lightbox-next').onclick = e => { e.stopPropagation(); navigate(1); };
     document.addEventListener('keydown', e => {
         if (!lightbox.classList.contains('active')) return;
-        if (e.key === 'ArrowLeft')  { currentIndex = (currentIndex - 1 + galeriItems.length) % galeriItems.length; openLightbox(galeriItems[currentIndex]); }
-        else if (e.key === 'ArrowRight') { currentIndex = (currentIndex + 1) % galeriItems.length; openLightbox(galeriItems[currentIndex]); }
-        else if (e.key === 'Escape')     closeLightbox();
-    });
-
-    // ── GALLERY CAROUSEL SETUP ───────────────────────────────────
-    const carousel1 = document.getElementById('galeri-carousel-1');
-    const carousel2 = document.getElementById('galeri-carousel-2');
-    const allItems  = [...(carousel1?.children ?? []), ...(carousel2?.children ?? [])];
-
-    if (carousel1) carousel1.innerHTML = '';
-    if (carousel2) carousel2.innerHTML = '';
-
-    const mid = Math.ceil(allItems.length / 2);
-    allItems.forEach((item, i) => {
-        const target = i < mid ? carousel1 : carousel2;
-        if (!target) return;
-        item.setAttribute('data-index', originalgaleriItems.length);
-        originalgaleriItems.push(item);
-        target.appendChild(item);
-    });
-
-    [carousel1, carousel2].forEach(c => {
-        if (!c) return;
-        Array.from(c.children).forEach(item => {
-            const clone = item.cloneNode(true);
-            clone.classList.add('clone');
-            c.appendChild(clone);
-        });
-        requestAnimationFrame(() => c.classList.add('is-ready'));
+        if (e.key === 'ArrowLeft') navigate(-1); else if (e.key === 'ArrowRight') navigate(1); else if (e.key === 'Escape') lightbox.click();
     });
 
     // ── HERO SLIDER ──────────────────────────────────────────────
-    const heroSlider = document.getElementById('hero-slider');
-    const heroDots   = document.querySelectorAll('.hero-dot');
+    const heroSlider = document.getElementById('hero-slider'), heroDots = document.querySelectorAll('.hero-dot');
     let heroIndex = 0, heroInterval = null;
 
-    const updateHeroSlider = () => {
-        heroSlider.style.transition = 'transform 0.6s ease-in-out';
-        heroSlider.style.transform  = `translateX(-${heroIndex * 100 / 3}%)`;
+    const updateHero = () => {
+        heroSlider.style.transform = `translateX(-${heroIndex * 100 / 3}%)`;
         heroDots.forEach((d, i) => d.classList.toggle('active', i === heroIndex));
     };
-    const startHeroAuto = () => {
-        clearInterval(heroInterval);
-        heroInterval = setInterval(() => { heroIndex = (heroIndex + 1) % 3; updateHeroSlider(); }, 5000);
+    const startAuto = () => { clearInterval(heroInterval); heroInterval = setInterval(() => { heroIndex = (heroIndex + 1) % 3; updateHero(); }, 5000); };
+    
+    if (heroSlider) {
+        startAuto();
+        heroDots.forEach(dot => dot.onclick = e => { heroIndex = +e.target.dataset.index; updateHero(); startAuto(); });
+    }
+
+    // ── READ MORE ────────────────────────────────────────────────
+    const btnReadMore = document.getElementById('btn-read-more'), sejarahPanjang = document.getElementById('sejarah-panjang');
+    const sejarahContainer = document.querySelector('#sejarah .container'), sejarahSection = document.getElementById('sejarah');
+
+    if (btnReadMore) btnReadMore.onclick = () => {
+        const isOpen = sejarahPanjang.style.display === 'block';
+        sejarahPanjang.style.display = isOpen ? 'none' : 'block';
+        sejarahContainer.classList.toggle('sejarah-expanded', !isOpen);
+        btnReadMore.innerHTML = isOpen ? 'Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i>' : 'Tutup Sejarah <i class="fa-solid fa-chevron-up"></i>';
+        document.querySelector('.quote-box')?.style.setProperty('display', isOpen ? 'block' : 'none');
+        if (swipeGuideEl) swipeGuideEl.style.display = isOpen ? 'block' : 'none';
+        setTimeout(() => {
+            window.scrollTo({ top: sejarahSection.offsetTop - mainNav.offsetHeight - 20, behavior: 'smooth' });
+            initCards();
+        }, 50);
     };
 
-    if (heroSlider) {
-        startHeroAuto();
-        heroDots.forEach(dot => {
-            dot.addEventListener('click', e => {
-                heroIndex = +e.target.getAttribute('data-index');
-                updateHeroSlider();
-                startHeroAuto();
-            });
+    // ── 3D TILT ──────────────────────────────────────────────────
+    const tilt = (el, amount) => {
+        el.addEventListener('mousemove', e => {
+            const { left, top, width, height } = el.getBoundingClientRect();
+            const rX = ((e.clientY - top - height / 2) / (height / 2)) * -amount;
+            const rY = ((e.clientX - left - width / 2) / (width / 2)) * amount;
+            el.style.transform = `perspective(1000px) rotateX(${rX}deg) rotateY(${rY}deg) scale3d(1.05,1.05,1.05)`;
         });
-
-        let isDragHero = false, heroStartX = 0;
-        heroSlider.addEventListener('mousedown', e => { isDragHero = true; heroStartX = e.pageX; heroSlider.style.transition = 'none'; });
-        window.addEventListener('mousemove', e => {
-            if (!isDragHero) return;
-            heroSlider.style.transform = `translateX(${-(heroIndex * window.innerWidth) + (e.pageX - heroStartX)}px)`;
-        });
-        window.addEventListener('mouseup', e => {
-            if (!isDragHero) return;
-            isDragHero = false;
-            const walk = e.pageX - heroStartX;
-            if (walk < -100 && heroIndex < 2) heroIndex++;
-            else if (walk > 100 && heroIndex > 0) heroIndex--;
-            updateHeroSlider();
-            startHeroAuto();
-        });
-    }
-
-    // ── READ MORE / SEJARAH ──────────────────────────────────────
-    const btnReadMore      = document.getElementById('btn-read-more');
-    const sejarahPanjang   = document.getElementById('sejarah-panjang');
-    const sejarahContainer = document.querySelector('#sejarah .container');
-    const sejarahSection   = document.getElementById('sejarah');
-
-    if (btnReadMore && sejarahPanjang) {
-        btnReadMore.addEventListener('click', () => {
-            const quoteBox = document.querySelector('.quote-box');
-            const isOpen   = sejarahPanjang.style.display === 'block';
-
-            sejarahPanjang.style.display = isOpen ? 'none' : 'block';
-            sejarahContainer?.classList.toggle('sejarah-expanded', !isOpen);
-            btnReadMore.innerHTML       = isOpen
-                ? 'Baca Selengkapnya <i class="fa-solid fa-chevron-down"></i>'
-                : 'Tutup Sejarah <i class="fa-solid fa-chevron-up"></i>';
-            btnReadMore.style.marginTop = isOpen ? '25px' : '40px';
-            if (quoteBox)    quoteBox.style.display    = isOpen ? 'block' : 'none';
-            if (swipeGuideEl) swipeGuideEl.style.display = isOpen ? 'block' : 'none';
-
-            const navH = mainNav.offsetHeight;
-            setTimeout(() => {
-                window.scrollTo({ top: sejarahSection.getBoundingClientRect().top + window.scrollY - navH - 20, behavior: 'smooth' });
-            }, isOpen ? 100 : 50);
-            setTimeout(initCards, 50);
-        });
-    }
-
-    // ── 3D TILT — LIGHTBOX ───────────────────────────────────────
-    let vpW = window.innerWidth, vpH = window.innerHeight;
-    window.addEventListener('resize', () => { vpW = window.innerWidth; vpH = window.innerHeight; }, { passive: true });
-
-    if (lightbox && lightboxImg) {
-        lightbox.addEventListener('mousemove', e => {
-            if (!lightbox.classList.contains('active')) return;
-            const dx = e.clientX - vpW / 2, dy = e.clientY - vpH / 2;
-            const mx = vpW * 0.4, my = vpH * 0.4;
-            if (Math.abs(dx) > mx || Math.abs(dy) > my) {
-                lightboxImg.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)';
-                return;
-            }
-            lightboxImg.style.transition = 'transform 0.1s ease-out';
-            lightboxImg.style.transform  = `perspective(1000px) rotateX(${(dy/my)*-12}deg) rotateY(${(dx/mx)*12}deg) scale3d(1.05,1.05,1.05)`;
-        });
-        lightbox.addEventListener('mouseleave', () => {
-            lightboxImg.style.transition = 'transform 0.5s ease-out';
-            lightboxImg.style.transform  = 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1,1,1)';
-        });
-    }
-
-    // ── 3D TILT — GOOGLE MAP ─────────────────────────────────────
-    const mapBox     = document.querySelector('.lokasi-map-box');
-    const mapOverlay = document.getElementById('map-overlay');
-    const MAP_RESET  = { transform: 'rotateX(0) rotateY(0) translateY(0) scale3d(1,1,1)', boxShadow: '0 25px 60px rgba(0,0,0,0.55)' };
-
-    if (mapBox && mapOverlay) {
-        mapBox.addEventListener('mousemove', e => {
-            if (mapOverlay.classList.contains('hidden')) return;
-            const { top, left, width, height } = mapBox.getBoundingClientRect();
-            const rX = ((e.clientY - top  - height / 2) / (height / 2)) * -12;
-            const rY = ((e.clientX - left - width  / 2) / (width  / 2)) *  12;
-            mapBox.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) translateY(-10px) scale3d(1.05,1.05,1.05)`;
-            mapBox.style.boxShadow = `${-rY}px ${rX + 30}px 60px rgba(0,0,0,0.6)`;
-        });
-        mapBox.addEventListener('mouseleave', () => Object.assign(mapBox.style, MAP_RESET));
-        mapOverlay.addEventListener('click', () => {
-            mapOverlay.classList.add('hidden');
-            Object.assign(mapBox.style, MAP_RESET);
-        });
-    }
+        el.addEventListener('mouseleave', () => el.style.transform = '');
+    };
+    if (lightboxImg) tilt(lightboxImg, 12);
+    const mapBox = document.querySelector('.lokasi-map-box'), mapOverlay = document.getElementById('map-overlay');
+    if (mapBox) tilt(mapBox, 12);
+    if (mapOverlay) mapOverlay.onclick = () => mapOverlay.classList.add('hidden');
 });

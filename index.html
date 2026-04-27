@@ -23,6 +23,7 @@
                 <img src="assets/logo.svg" alt="Logo">
                 <span class="nav-text">Pura Agung Jagadnatha</span>
             </a>
+            <input type="checkbox" id="nav-toggle" class="nav-toggle">
             <ul class="nav-links">
                 <li><a href="#home">Beranda</a></li>
                 <li><a href="#sejarah">Sejarah</a></li>
@@ -31,9 +32,9 @@
                 <li><a href="#lokasi">Lokasi</a></li>
                 <div class="nav-pill-indicator"></div>
             </ul>
-            <div class="mobile-toggle" id="mobile-menu">
+            <label for="nav-toggle" class="mobile-toggle" id="mobile-menu">
                 <span></span><span></span><span></span>
-            </div>
+            </label>
         </div>
     </nav>
 
@@ -96,7 +97,7 @@
                 <p class="section-sub">Keindahan suasana Pura Agung Jagadnatha.</p>
             </div>
             <div class="galeri-carousel-wrapper reveal" id="carousel-wrapper">
-                <div class="galeri-carousel" id="galeri-carousel-1">
+                <div class="galeri-carousel is-ready" id="galeri-carousel-1">
                     <div class="galeri-item"><img src="images/1.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/2.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/3.avif"  alt="Pura" loading="lazy" decoding="async"></div>
@@ -104,14 +105,29 @@
                     <div class="galeri-item"><img src="images/5.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/6.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/7.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <!-- Duplicate for infinite scroll -->
+                    <div class="galeri-item clone"><img src="images/1.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/2.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/3.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/4.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/5.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/6.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/7.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
-                <div class="galeri-carousel" id="galeri-carousel-2">
+                <div class="galeri-carousel is-ready" id="galeri-carousel-2">
                     <div class="galeri-item"><img src="images/8.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/9.avif"  alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/10.avif" alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/11.avif" alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/12.avif" alt="Pura" loading="lazy" decoding="async"></div>
                     <div class="galeri-item"><img src="images/13.avif" alt="Pura" loading="lazy" decoding="async"></div>
+                    <!-- Duplicate for infinite scroll -->
+                    <div class="galeri-item clone"><img src="images/8.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/9.avif"  alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/10.avif" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/11.avif" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/12.avif" alt="Pura" loading="lazy" decoding="async"></div>
+                    <div class="galeri-item clone"><img src="images/13.avif" alt="Pura" loading="lazy" decoding="async"></div>
                 </div>
             </div>
         </section>
