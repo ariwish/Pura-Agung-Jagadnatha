@@ -2,7 +2,7 @@
 
 **Pura Agung Jagatnatha** adalah proyek website untuk memperkenalkan keindahan dan sejarah dari Pura Agung tnatha yang terletak di Kota Denpasar, Bali.
 
-🔗 **[ariwish.github.io/Pura-Agung-Jagatnatha](https://ariwish.github.io/Pura-Agung-Jagadnatha/)**
+🔗 **[ariwish.github.io/Pura-Agung-Jagatnatha](https://ariwish.github.io/Pura-Agung-Jagatnatha/)**
 
 ![Preview](https://github.com/user-attachments/assets/89cd5df7-dd2b-4ab6-9262-7c5eb5fd14aa)
 
