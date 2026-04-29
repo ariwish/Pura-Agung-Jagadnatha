@@ -23,14 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (s.tagName !== 'FOOTER' && scrollY >= s.offsetTop - 200) activeId = s.id;
         });
         if (scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) activeId = 'lokasi';
-        
+
         const link = [...navItems].find(a => a.getAttribute('href') === `#${activeId}`);
         navItems.forEach(a => a.classList.toggle('active', a === link));
         if (link) updatePill(link);
     };
 
     [document.getElementById('scroll-start'), ...document.querySelectorAll('.reveal')].forEach(el => el && obs.observe(el));
-    
+
     let tick = false;
     window.addEventListener('scroll', () => {
         if (!tick) {
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
     window.addEventListener('resize', updateActive);
     updateActive();
-    
+
     document.querySelector('.nav-links').onclick = e => { if (e.target.tagName === 'A') document.getElementById('nav-toggle').checked = false; };
 
     // ── SWIPE GALLERY ────────────────────────────────────────────

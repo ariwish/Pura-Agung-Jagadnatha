@@ -1,8 +1,8 @@
-# ![logo](https://github.com/user-attachments/assets/fb907e01-8c7e-4242-b129-266728cf07ca) Pura Agung Jagadnatha
+# ![logo](https://github.com/user-attachments/assets/fb907e01-8c7e-4242-b129-266728cf07ca) Pura Agung Jagatnatha
 
-**Pura Agung Jagadnatha** adalah proyek website untuk memperkenalkan keindahan dan sejarah dari Pura Agung Jagadnatha yang terletak di Kota Denpasar, Bali.
+**Pura Agung Jagatnatha** adalah proyek website untuk memperkenalkan keindahan dan sejarah dari Pura Agung tnatha yang terletak di Kota Denpasar, Bali.
 
-🔗 **[ariwish.github.io/Pura-Agung-Jagadnatha](https://ariwish.github.io/Pura-Agung-Jagadnatha/)**
+🔗 **[ariwish.github.io/Pura-Agung-Jagatnatha](https://ariwish.github.io/Pura-Agung-Jagadnatha/)**
 
 ![Preview](https://github.com/user-attachments/assets/89cd5df7-dd2b-4ab6-9262-7c5eb5fd14aa)
 
